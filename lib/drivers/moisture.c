@@ -22,6 +22,13 @@
  *
  * This function initializes the ADC to read values from the moisture sensor connected to pin PF5 (ADC5).
  */
+
+// TODO -this is a definition for used only to pass the testing, need to be removed/testes with the real sensor
+#define MUX0 1
+#define MUX2 2
+#define ADC5D 5
+// TODO until here -remove 
+
 void moisture_init(void) {
     // Set reference voltage to AVCC and left adjust ADC result
     // The  MUX1:5 should be set to 10000 for choosing ADC8, which ius placed on PK0 (look at page 283)
