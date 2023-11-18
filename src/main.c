@@ -17,6 +17,7 @@
 #include "servo.h"
 #include "wifi.h"
 #include "pump.h"
+#include "communication.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -25,35 +26,6 @@
 #define WIFI_PASSWORD "trudnehaslo"
 #define TCP_IP "192.168.89.240"
 #define TCP_PORT 23
-
-void handle_wifi_error(WIFI_ERROR_MESSAGE_t errorcode, const char *source)
-{
-  char buffer[100]; // Buffer to store the error message
-
-  switch (errorcode)
-  {
-  case WIFI_OK:
-    sprintf(buffer, "\nWifi connect OK to %s\n", source);
-    break;
-  case WIFI_FAIL:
-    sprintf(buffer, "\nWifi connect FAIL to %s\n", source);
-    break;
-  case WIFI_ERROR_RECEIVED_ERROR:
-    sprintf(buffer, "\nWifi connect ERROR to %s\n", source);
-    break;
-  case WIFI_ERROR_NOT_RECEIVING:
-    sprintf(buffer, "\nWifi connect NOT RECEIVING to %s\n", source);
-    break;
-  case WIFI_ERROR_RECEIVING_GARBAGE:
-    sprintf(buffer, "\nWifi connect GARBAGE to %s\n", source);
-    break;
-  default:
-    sprintf(buffer, "\nUnknown error to %s\n", source);
-    break;
-  }
-
-  pc_comm_send_string_blocking(buffer); // Send the error message
-}
 
 uint8_t receiveTest[1];
 
@@ -114,7 +86,10 @@ int main(void)
 
   // Connect to WiFi
   WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP(WIFI_SSID, WIFI_PASSWORD);
-  handle_wifi_error(errorcode, WIFI_SSID);
+  testWifiConnection(errorcode);
+
+  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
+  testTcpConnection(errorcode);
 
   // Create TCP connection
   errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callbackTest, receiveTest);
