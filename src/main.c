@@ -59,55 +59,50 @@ uint8_t receiveTest[1];
 
 void callbackTest()
 {
-  if (receiveTest[0] == '0')
+  switch (receiveTest[0])
   {
-    pc_comm_send_string_blocking("\nResult 0\n");
+    case '0':
+      pc_comm_send_string_blocking("\nResult 0\n");
+      break;
+    case '1':
+      pc_comm_send_string_blocking("\nTest complete\n");
+      break;
+    case '2':
+      pc_comm_send_string_blocking("\nPLANT GOOD\n");
+      display_setValues(9, 0, 0, 13);
+      break;
+    case '3':
+      pc_comm_send_string_blocking("\nPLANT BAD\n");
+      display_setValues(11, 10, 13, 17);
+      break;
+    case '4':
+      pc_comm_send_string_blocking("\nPLANT DEAD\n");
+      display_setValues(13, 14, 10, 13);
+      break;
+    case '5':
+      pc_comm_send_string_blocking("\nCAFE\n");
+      display_setValues(12, 10, 15, 14);
+      break;
+    case '6':
+      pc_comm_send_string_blocking("\nFACE\n");
+      display_setValues(15, 10, 12, 14);
+      break;
+    case '7':
+      pc_comm_send_string_blocking("\nDEAF\n");
+      display_setValues(13, 14, 10, 15);
+      break;
+    case '8':
+      pc_comm_send_string_blocking("\nDOC1\n");
+      display_setValues(13, 0, 12, 1);
+      break;
+    case '9':
+      pc_comm_send_string_blocking("\nCOOL\n");
+      display_setValues(12, 0, 0, 1);
+      break;
+    default:
+      // Handle unknown case if needed
+      break;
   }
-  if (receiveTest[0] == '1')
-  {
-    pc_comm_send_string_blocking("\nTest complete\n");
-  }
-  if (receiveTest[0] == '2')
-  {
-    pc_comm_send_string_blocking("\nPLANT GOOD\n");
-    display_setValues(9, 0, 0, 13);
-  }
-  if (receiveTest[0] == '3')
-  {
-    pc_comm_send_string_blocking("\nPLANT BAD\n");
-    display_setValues(11, 10, 13, 17);
-  }
-   if (receiveTest[0] == '4')
-  {
-    pc_comm_send_string_blocking("\nPLANT DEAD\n");
-    display_setValues(13, 14, 10, 13);
-  }
-   if (receiveTest[0] == '5')
-  {
-    pc_comm_send_string_blocking("\nCAFE\n");
-    display_setValues(12, 10, 15, 14);
-  }
-   if (receiveTest[0] == '6')
-  {
-    pc_comm_send_string_blocking("\nFACE\n");
-    display_setValues(15, 10, 12, 14);
-  }
-   if (receiveTest[0] == '7')
-  {
-    pc_comm_send_string_blocking("\nDEAF\n");
-    display_setValues(13, 14, 10, 15);
-  }
-   if (receiveTest[0] == '8')
-  {
-    pc_comm_send_string_blocking("\nDOC1\n");
-    display_setValues(13, 0, 12, 1);
-  }
-   if (receiveTest[0] == '9')
-  {
-    pc_comm_send_string_blocking("\nCOOL\n");
-    display_setValues(12, 0, 0, 1);
-  }
-  
 }
 
 int main(void)
