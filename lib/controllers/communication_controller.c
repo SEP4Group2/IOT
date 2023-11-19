@@ -1,8 +1,10 @@
 #include "wifi.h"
 #include "display.h"
 #include "includes.h"
+#include "communication_controller.h"
+#include "pc_comm.h"
 
-const char* testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode) 
+char* testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode) 
 {
     static char buffer[100]; 
 
@@ -31,7 +33,7 @@ const char* testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode)
 }
 
 
-const char* testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode) 
+char* testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode) 
 {
     static char buffer[100]; 
 
@@ -59,23 +61,30 @@ const char* testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode)
     return buffer;
 }
 
-const char* callback(uint8_t receiveParameter)
-{
-  switch (receiveParameter)
-  {
-    case 'GOOD':
-      pc_comm_send_string_blocking("\nGOOD\n");
-      return "\nPLANT GOOD\n";
-    case 'BAD':
-      pc_comm_send_string_blocking("\nBAD\n");
-      return "\nPLANT BAD\n";
-    case 'DEAD':
-      pc_comm_send_string_blocking("\nDEAD\n");
-      return "\nPLANT DEAD\n";
-    default:
-      pc_comm_send_string_blocking("\nUnknown case\n");
-      return "\nUnknown case\n";
-  }
+void callbackTest(char *received_message_ptr) {
+    switch (received_message_ptr[0]) {
+        case '0':
+            pc_comm_send_string_blocking("\nGOOD\n");
+            // Handle case '0', whatever is required
+            break;
+
+        case '1':
+            pc_comm_send_string_blocking("\nBAD\n");
+            // Handle case '1', whatever is required
+            break;
+
+        case '2':
+            pc_comm_send_string_blocking("\nDEAD\n");
+            // Handle case '2', whatever is required
+            break;
+
+        default:
+            pc_comm_send_string_blocking("\nUnknown case\n");
+            // Handle default case, whatever is required
+            break;
+    }
 }
+
+
 
 

@@ -1,10 +1,10 @@
-
 #include "pump.h"
 #include "includes.h"
 
 
 void pump_run_timeout(int miliseconds)
 {
+    pump_init();
     pump_turnOn();
     _delay_ms(miliseconds);
     pump_turnOff();
