@@ -5,19 +5,15 @@
 #include "leds.h"
 #include "uvsensor.h"
 #include "moisture.h"
-#include "buzzer.h"
 #include "buttons.h"
 #include "periodic_task.h"
-#include "adxl345.h"
 #include "hc_sr04.h"
 #include "wifi.h"
 #include "avr/power.h"
-#include "pir.h"
-#include "tone.h"
-#include "servo.h"
 #include "wifi.h"
 #include "pump.h"
 #include "communication.h"
+#include "pump_controller.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -66,7 +62,7 @@ int main(void)
 
   pc_comm_send_string_blocking("READY!\n\n");
 
-  // pump_run_timeout(2000);
+  pump_run_timeout(2000);
 
   while (1)
   {
