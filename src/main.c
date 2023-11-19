@@ -21,58 +21,52 @@
 #include <string.h>
 #include <stdio.h>
 
+#define WIFI_SSID "iPhone Kevin "
+#define WIFI_PASSWORD "sockstobee"
+#define TCP_IP "20.107.165.243"
+#define TCP_PORT 23
+
+void handle_wifi_error(WIFI_ERROR_MESSAGE_t errorcode, const char* source) {
+  char buffer[100]; // Buffer to store the error message
+
+  switch (errorcode) {
+    case WIFI_OK:
+      sprintf(buffer, "\nWifi connect OK to %s\n", source);
+      break;
+    case WIFI_FAIL:
+      sprintf(buffer, "\nWifi connect FAIL to %s\n", source);
+      break;
+    case WIFI_ERROR_RECEIVED_ERROR:
+      sprintf(buffer, "\nWifi connect ERROR to %s\n", source);
+      break;
+    case WIFI_ERROR_NOT_RECEIVING:
+      sprintf(buffer, "\nWifi connect NOT RECEIVING to %s\n", source);
+      break;
+    case WIFI_ERROR_RECEIVING_GARBAGE:
+      sprintf(buffer, "\nWifi connect GARBAGE to %s\n", source);
+      break;
+    default:
+      sprintf(buffer, "\nUnknown error to %s\n", source);
+      break;
+  }
+
+  pc_comm_send_string_blocking(buffer); // Send the error message
+}
+
 int main(void)
 {
-
-  pc_comm_init(9600, NULL);
-
+pc_comm_init(9600, NULL);
   pc_comm_send_string_blocking("LOADING!\n");
 
   wifi_init();
 
-  WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP("iPhone Kevin ", "sockstobee");
-  if (errorcode == WIFI_OK)
-  {
-    pc_comm_send_string_blocking("\nWifi connect OK\n");
-  }
-  else if (errorcode == WIFI_FAIL)
-  {
-    pc_comm_send_string_blocking("\nWifi connect FAIL\n");
-  }
-  else if (errorcode == WIFI_ERROR_RECEIVED_ERROR)
-  {
-    pc_comm_send_string_blocking("\nWifi connect ERROR\n");
-  }
-  else if (errorcode == WIFI_ERROR_NOT_RECEIVING)
-  {
-    pc_comm_send_string_blocking("\nWifi connect NOT RECEIVING\n");
-  }
-  else if (errorcode == WIFI_ERROR_RECEIVING_GARBAGE)
-  {
-    pc_comm_send_string_blocking("\nWifi connect GARBAGE\n");
-  }
+  // Connect to WiFi
+  WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP(WIFI_SSID, WIFI_PASSWORD);
+  handle_wifi_error(errorcode, WIFI_SSID);
 
-  errorcode = wifi_command_create_TCP_connection("20.107.165.243", 23, NULL, NULL);
-  if (errorcode == WIFI_OK)
-  {
-    pc_comm_send_string_blocking("Wifi tcp OK\n\n");
-  }
-  else if (errorcode == WIFI_FAIL)
-  {
-    pc_comm_send_string_blocking("Wifi tcp FAIL\n\n");
-  }
-  else if (errorcode == WIFI_ERROR_RECEIVED_ERROR)
-  {
-    pc_comm_send_string_blocking("Wifi tcp ERROR\n\n");
-  }
-  else if (errorcode == WIFI_ERROR_NOT_RECEIVING)
-  {
-    pc_comm_send_string_blocking("Wifi tcp NOT RECEIVING\n\n");
-  }
-  else if (errorcode == WIFI_ERROR_RECEIVING_GARBAGE)
-  {
-    pc_comm_send_string_blocking("Wifi tcp GARBAGE\n\n");
-  }
+  // Create TCP connection
+  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
+  handle_wifi_error(errorcode,TCP_IP );
 
   display_init();
   leds_init();
