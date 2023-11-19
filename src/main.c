@@ -34,23 +34,12 @@ int main(void)
   pc_comm_init(9600, NULL);
   pc_comm_send_string_blocking("LOADING!\n");
 
+  char caaray[128];
+
+  display_setValues(13, 14, 10, 13);
+
   wifi_init();
-
-  // Connect to WiFi
-  WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP(WIFI_SSID, WIFI_PASSWORD);
-  testWifiConnection(errorcode);
-
-  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
-  testTcpConnection(errorcode);
-
- 
-  // Create TCP connection
-  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callbackTest, receiveParameter);
-
-  handle_wifi_error(errorcode, TCP_IP);
-
   display_init();
-  leds_init();
   uvsensor_init();
   moisture_init();
   pump_init();
@@ -58,9 +47,19 @@ int main(void)
   buttons_init();
   dht11_init();
 
-  display_setValues(13, 14, 10, 13);
+  // Connect to WiFi
+  WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP(WIFI_SSID, WIFI_PASSWORD);
+  testWifiConnection(errorcode);
+  
+  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
+  testTcpConnection(errorcode);
 
-  char caaray[128];
+ 
+  // Create TCP connection
+  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callbackTest(receiveParameter), receiveParameter);
+
+  handle_wifi_error(errorcode, TCP_IP);
+
   uint8_t humidity_integer, humidity_decimal, temperature_integer, temperature_decimal; // Variables for humidity and temperature
 
   // consider using only integer values for humidity and temperature instead of decimal values

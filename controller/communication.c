@@ -1,4 +1,5 @@
 #include "wifi.h"
+#include "display.h"
 #include "includes.h"
 
 const char* testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode) 
@@ -58,50 +59,23 @@ const char* testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode)
     return buffer;
 }
 
-void callbackTest(uint8_t receiveParameter)
+const char* callback(uint8_t receiveParameter)
 {
   switch (receiveParameter)
   {
-    case '0':
-      pc_comm_send_string_blocking("\nResult 0\n");
-      break;
-    case '1':
-      pc_comm_send_string_blocking("\nTest complete\n");
-      break;
-    case '2':
-      pc_comm_send_string_blocking("\nPLANT GOOD\n");
-      display_setValues(9, 0, 0, 13);
-      break;
-    case '3':
-      pc_comm_send_string_blocking("\nPLANT BAD\n");
-      display_setValues(11, 10, 13, 17);
-      break;
-    case '4':
-      pc_comm_send_string_blocking("\nPLANT DEAD\n");
-      display_setValues(13, 14, 10, 13);
-      break;
-    case '5':
-      pc_comm_send_string_blocking("\nCAFE\n");
-      display_setValues(12, 10, 15, 14);
-      break;
-    case '6':
-      pc_comm_send_string_blocking("\nFACE\n");
-      display_setValues(15, 10, 12, 14);
-      break;
-    case '7':
-      pc_comm_send_string_blocking("\nDEAF\n");
-      display_setValues(13, 14, 10, 15);
-      break;
-    case '8':
-      pc_comm_send_string_blocking("\nDOC1\n");
-      display_setValues(13, 0, 12, 1);
-      break;
-    case '9':
-      pc_comm_send_string_blocking("\nCOOL\n");
-      display_setValues(12, 0, 0, 1);
-      break;
+    case 'GOOD':
+      pc_comm_send_string_blocking("\nGOOD\n");
+      return "\nPLANT GOOD\n";
+    case 'BAD':
+      pc_comm_send_string_blocking("\nBAD\n");
+      return "\nPLANT BAD\n";
+    case 'DEAD':
+      pc_comm_send_string_blocking("\nDEAD\n");
+      return "\nPLANT DEAD\n";
     default:
-      // Handle unknown case if needed
-      break;
+      pc_comm_send_string_blocking("\nUnknown case\n");
+      return "\nUnknown case\n";
   }
 }
+
+
