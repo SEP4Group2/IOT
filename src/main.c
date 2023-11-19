@@ -27,55 +27,7 @@
 #define TCP_IP "192.168.89.240"
 #define TCP_PORT 23
 
-uint8_t receiveTest[1];
-
-void callbackTest()
-{
-  switch (receiveTest[0])
-  {
-    case '0':
-      pc_comm_send_string_blocking("\nResult 0\n");
-      break;
-    case '1':
-      pc_comm_send_string_blocking("\nTest complete\n");
-      break;
-    case '2':
-      pc_comm_send_string_blocking("\nPLANT GOOD\n");
-      display_setValues(9, 0, 0, 13);
-      break;
-    case '3':
-      pc_comm_send_string_blocking("\nPLANT BAD\n");
-      display_setValues(11, 10, 13, 17);
-      break;
-    case '4':
-      pc_comm_send_string_blocking("\nPLANT DEAD\n");
-      display_setValues(13, 14, 10, 13);
-      break;
-    case '5':
-      pc_comm_send_string_blocking("\nCAFE\n");
-      display_setValues(12, 10, 15, 14);
-      break;
-    case '6':
-      pc_comm_send_string_blocking("\nFACE\n");
-      display_setValues(15, 10, 12, 14);
-      break;
-    case '7':
-      pc_comm_send_string_blocking("\nDEAF\n");
-      display_setValues(13, 14, 10, 15);
-      break;
-    case '8':
-      pc_comm_send_string_blocking("\nDOC1\n");
-      display_setValues(13, 0, 12, 1);
-      break;
-    case '9':
-      pc_comm_send_string_blocking("\nCOOL\n");
-      display_setValues(12, 0, 0, 1);
-      break;
-    default:
-      // Handle unknown case if needed
-      break;
-  }
-}
+uint8_t receiveParameter[0];
 
 int main(void)
 {
@@ -91,8 +43,10 @@ int main(void)
   errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
   testTcpConnection(errorcode);
 
+ 
   // Create TCP connection
-  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callbackTest, receiveTest);
+  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callbackTest, receiveParameter);
+
   handle_wifi_error(errorcode, TCP_IP);
 
   display_init();
