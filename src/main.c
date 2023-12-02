@@ -18,6 +18,7 @@
 #include <string.h>
 #include <stdio.h>
 
+//WIFI configurations
 //For Adrian
 #define WIFI_SSID "ONEPLUS"
 #define WIFI_PASSWORD "trudnehaslo"
@@ -35,11 +36,12 @@
 #define TCP_IP3 "172.20.10.4"
 
 
-char receiveParameter[4];
+char receiveParameter[16];
 
 
-
-#define EEPROM_FLOAT_START_ADDRESS 4092
+//Saving ID to EEPROM
+//Should be moved to another class
+#define EEPROM_FLOAT_START_ADDRESS 4090
 
 void writeFloatToEEPROM(int data)
 {
@@ -59,12 +61,14 @@ int readFloatFromEEPROM()
 int main(void)
 {
 
-  
+  //Should probably be moved to communication controller
+  //Init for pc_comm
   pc_comm_init(9600, NULL);
   pc_comm_send_string_blocking("LOADING!\n");
 
 
 
+  //Should be moved to EEPROM controller and methods used from there
   //EEPROM save test
   // int data = 69;
   // writeFloatToEEPROM(data);
@@ -72,7 +76,7 @@ int main(void)
   //EEPROM read test
   char buffers[128];
 
-  sprintf(buffers, "Data read from EEPROM: %d\n", readFloatFromEEPROM()); // Read the data from EEPROM address 0
+  sprintf(buffers, "Data read from EEPROM: %d\n", readFloatFromEEPROM()); 
   pc_comm_send_string_blocking(buffers);
 
   
@@ -93,9 +97,27 @@ int main(void)
   // errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
   // testTcpConnection(errorcode);
 
- 
+  void callCallback()
+  {
+    callbackTest(receiveParameter);
+    char buffer[128];
+    char buffer2[128];
+    char buffer3[128];
+    sprintf(buffer, "callCallback  Communication controller &: %d\n", &receiveParameter);
+    sprintf(buffer2, "callCallback  Communication controller: %d\n", receiveParameter);
+    sprintf(buffer3, "callCallback  Communication controller*: %d\n", *receiveParameter);
+
+
+    pc_comm_send_string_blocking(buffer);
+    pc_comm_send_string_blocking(buffer2);
+    pc_comm_send_string_blocking(buffer3);
+  }
+  
   // Create TCP connection
-  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callbackTest, receiveParameter);
+  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callCallback, receiveParameter);
+
+
+  
 
   uint8_t humidity_integer, humidity_decimal, temperature_integer, temperature_decimal; // Variables for humidity and temperature
 
@@ -103,9 +125,8 @@ int main(void)
 
   char caaray[128];
 
+  //Should be moved to communication controller as a part of WIFI init method
   pc_comm_send_string_blocking("READY!\n\n");
-
-  // pump_run_timeout(2000);
 
   while (1)
   {
@@ -127,9 +148,11 @@ int main(void)
     pc_comm_send_string_blocking(caaray);
     wifi_command_TCP_transmit((uint8_t *)caaray, length);
 
+    // pump_run();
+
 
     //testing parameter received from callback
-    pc_comm_send_string_blocking(receiveParameter);
+    // pc_comm_send_string_blocking(receiveParameter);
 
     // callbackTest;
 

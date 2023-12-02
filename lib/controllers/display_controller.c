@@ -1,14 +1,15 @@
 #include "display.h"
 #include "includes.h"
 
-const void writeToDisplay(uint8_t *receiveParameter)
+const void writeToDisplay(uint8_t receiveParameter)
 {
     int part1, part2, part3, part4;
     char message[50];
-    sprintf(message, "\nReceived: message from ESP32 is: %02d \n", receiveParameter);
+    sprintf(message, "\nReceived: message from ESP8266 is: %d \n", receiveParameter);
 
+    pc_comm_send_string_blocking(receiveParameter);
     pc_comm_send_string_blocking(message);
-    int totalNumber = *receiveParameter;
+    int totalNumber = receiveParameter;
 
     // Truncate and store each 2-digit part
     part4 = totalNumber % 100;

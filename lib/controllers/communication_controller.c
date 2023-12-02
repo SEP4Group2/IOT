@@ -68,6 +68,17 @@ void callbackTest(char *received_message_ptr)
 
     writeToDisplay(received_message_ptr);
 
+    char buffer[128];
+    char buffer2[128];
+    char buffer3[128];
+    sprintf(buffer, "Communication controller &: %d\n", &received_message_ptr);
+    sprintf(buffer2, "Communication controller: %d\n", received_message_ptr);
+    sprintf(buffer3, "Communication controller*: %d\n", *received_message_ptr);
+    
+    pc_comm_send_string_blocking(buffer);
+    pc_comm_send_string_blocking(buffer2);   
+    pc_comm_send_string_blocking(buffer3);
+
     switch (received_message_ptr[0])
     {
     case '0':
