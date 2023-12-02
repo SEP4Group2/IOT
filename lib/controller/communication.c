@@ -1,5 +1,6 @@
 #include "wifi.h"
 #include "includes.h"
+#include "display.h"
 
 const char *testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode)
 {
@@ -59,28 +60,29 @@ const char *testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode)
   return buffer;
 }
 
-void callBackTest(uint8_t receiveParameter)
+const uint8_t *callBackTestL(uint8_t *receiveParameter)
 {
   int part1, part2, part3, part4;
   char message[50];
   sprintf(message, "\nReceived: message from ESP32 is: %02d \n", receiveParameter);
 
   pc_comm_send_string_blocking(message);
+  int totalNumber = *receiveParameter;
 
   // Truncate and store each 2-digit part
-  part4 = receiveParameter % 100;
-  receiveParameter /= 100;
+  part4 = totalNumber % 100;
+  totalNumber /= 100;
 
-  part3 = receiveParameter % 100;
-  receiveParameter /= 100;
+  part3 = totalNumber % 100;
+  totalNumber /= 100;
 
-  part2 = receiveParameter % 100;
-  receiveParameter /= 100;
+  part2 = totalNumber % 100;
+  totalNumber /= 100;
 
-  part1 = receiveParameter; // The remaining part is stored in part1
+  part1 = totalNumber; // The remaining part is stored in part1
 
   display_setValues(part1, part2, part3, part4);
-}
+};
 
 // void callbackTest(uint8_t receiveParameter)
 // {

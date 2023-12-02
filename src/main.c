@@ -36,18 +36,15 @@ int main(void)
 
   wifi_init();
 
-  // Connect to WiFi
+   // Connect to WiFi
   WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP(WIFI_SSID, WIFI_PASSWORD);
   testWifiConnection(errorcode);
 
   errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
   testTcpConnection(errorcode);
 
- 
   // Create TCP connection
-  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callbackTest, receiveParameter);
-
-  handle_wifi_error(errorcode, TCP_IP);
+  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callbackTest(receiveParameter), receiveParameter);
 
   display_init();
   leds_init();
