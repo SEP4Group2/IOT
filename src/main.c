@@ -13,10 +13,12 @@
 #include "wifi.h"
 #include "communication_controller.h"
 #include "pump_controller.h"
+#include "pump.h"
 #include "avr/eeprom.h"
 
 #include <string.h>
 #include <stdio.h>
+
 
 //WIFI configurations
 //For Adrian
@@ -25,10 +27,16 @@
 #define TCP_IP "192.168.20.240"
 #define TCP_PORT 23
 
-//For Tina to test TCP Server
+// For Kevin
+#define WIFI_SSID1 "iPhone Kevin "
+#define WIFI_PASSWORD1 "sockstobee"
+#define TCP_IP1 "172.20.10.9"
+
+// For Tina to test TCP Server
 #define WIFI_SSID2 "Stofa82982"
 #define WIFI_PASSWORD2 "digt41mudre46"
 #define TCP_IP2 "192.168.87.144"
+
 
 //Tina Jaššik
 #define WIFI_SSID3 "Tina Device"
@@ -57,7 +65,6 @@ int readFloatFromEEPROM()
 
 
 
-
 int main(void)
 {
 
@@ -65,8 +72,6 @@ int main(void)
   //Init for pc_comm
   pc_comm_init(9600, NULL);
   pc_comm_send_string_blocking("LOADING!\n");
-
-
 
   //Should be moved to EEPROM controller and methods used from there
   //EEPROM save test
@@ -80,20 +85,22 @@ int main(void)
   pc_comm_send_string_blocking(buffers);
 
   
-
   wifi_init();
   display_init();
-  display_setValues(13, 14, 10, 13);
   uvsensor_init();
   moisture_init();
   hc_sr04_init();
   buttons_init();
   dht11_init();
+  pump_init();
+
+  display_setValues(13, 14, 10, 13);
 
   // Connect to WiFi
+
   WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP(WIFI_SSID, WIFI_PASSWORD);
   pc_comm_send_string_blocking(testWifiConnection(errorcode));
-  
+
   // errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
   // testTcpConnection(errorcode);
 
@@ -117,7 +124,6 @@ int main(void)
   errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, callCallback, receiveParameter);
 
 
-  
 
   uint8_t humidity_integer, humidity_decimal, temperature_integer, temperature_decimal; // Variables for humidity and temperature
 
@@ -125,12 +131,12 @@ int main(void)
 
   char caaray[128];
 
-  //Should be moved to communication controller as a part of WIFI init method
-  pc_comm_send_string_blocking("READY!\n\n");
+  pc_comm_send_string_blocking("\nREADY!\n\n");
+
+  timer_init_a(&button_1_check, 100);
 
   while (1)
   {
-
     DHT11_ERROR_MESSAGE_t error = dht11_get(&humidity_integer, &humidity_decimal, &temperature_integer, &temperature_decimal);
     if (error == DHT11_OK)
     {
