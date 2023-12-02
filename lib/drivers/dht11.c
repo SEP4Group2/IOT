@@ -53,6 +53,7 @@ DHT11_ERROR_MESSAGE_t dht11_get(uint8_t* humidity_integer, uint8_t*  humidity_de
     DATA_PORT |= (1<<DATA_BIT); // Do I have to pullup?
 
 	/* detect change and read data */
+		cli();
 	for ( i = 0; i < MAX_TIMINGS; i++ )
 	{
 		counter = 0;
@@ -78,10 +79,13 @@ DHT11_ERROR_MESSAGE_t dht11_get(uint8_t* humidity_integer, uint8_t*  humidity_de
 			j++;
 		}
 	}
+	
 	/*
 	 * check we read 40 bits (8bit x 5 ) + verify checksum in the last byte
 	 * print it out if data is good
 	 */
+
+
 	if ( (j >= 40) &&
 	     (data[4] == ( (data[0] + data[1] + data[2] + data[3]) & 0xFF) ) )
 	{
@@ -98,4 +102,5 @@ DHT11_ERROR_MESSAGE_t dht11_get(uint8_t* humidity_integer, uint8_t*  humidity_de
         *humidity_integer=*humidity_decimal=*temperature_integer=*temperature_decimal =0;
         return DHT11_FAIL;
 	}
+	sei();
 }
