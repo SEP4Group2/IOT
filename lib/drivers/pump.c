@@ -17,9 +17,9 @@ void pump_turnOff()
     PORTH |= ((1 << 6));
 }
 
-void pump_run_timeout(int miliseconds)
-{
-    pump_turnOn();
-    _delay_ms(miliseconds);
-    pump_turnOff();
-}
+// void pump_run_timeout(int miliseconds)
+// {
+//     pump_turnOn();
+//     _delay_ms(miliseconds);
+//     pump_turnOff();
+// }
