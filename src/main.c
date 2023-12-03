@@ -77,7 +77,6 @@ int main(void)
 
   while (1)
   {
-
     // initialize the humidity and temperature sensor
     get_dht11_sensor_data();
 
