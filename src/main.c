@@ -47,11 +47,8 @@ int main(void)
 
   // Connect to WiFi
 
-  WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP(getWIFI_SSID(), getWIFI_PASSWORD());
-  pc_comm_send_string_blocking(testWifiConnection(errorcode));
-
-  // errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
-  // testTcpConnection(errorcode);
+  WIFI_ERROR_MESSAGE_t wifi_connection_status = wifi_command_join_AP(getWIFI_SSID(), getWIFI_PASSWORD());
+  pc_comm_send_string_blocking(testWifiConnection(wifi_connection_status));
 
   void callCallback()
   {
@@ -69,11 +66,10 @@ int main(void)
   }
 
   // Create TCP connection
-  errorcode = wifi_command_create_TCP_connection(getTCP_IP(), getTCP_PORT(), callCallback, receiveParameter);
+  WIFI_ERROR_MESSAGE_t server_connection_status = wifi_command_create_TCP_connection(getTCP_IP(), getTCP_PORT(), callCallback, receiveParameter);
+  pc_comm_send_string_blocking(testTcpConnection(server_connection_status));
 
-  uint8_t humidity_integer, humidity_decimal, temperature_integer, temperature_decimal; // Variables for humidity and temperature
-
-  char caaray[128];
+  char buffer[128];
 
   pc_comm_send_string_blocking("\nREADY!\n\n");
 
@@ -85,11 +81,11 @@ int main(void)
     // initialize the humidity and temperature sensor
     get_dht11_sensor_data();
 
-    sprintf(caaray, "{%d,%d,%d%,%d,%d}",
+    sprintf(buffer, "{%d,%d,%d%,%d,%d}",
             get_formatted_water_level_reading(), get_formatted_moisture_reading(), get_formatted_uv_sensor_reading(), get_formatted_temperature_reading(), get_formatted_humidity_reading());
 
-    pc_comm_send_string_blocking(caaray);
-    wifi_command_TCP_transmit((uint8_t *)caaray, strlen(caaray));
+    pc_comm_send_string_blocking(buffer);
+    wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
 
     // pump_run();
 
