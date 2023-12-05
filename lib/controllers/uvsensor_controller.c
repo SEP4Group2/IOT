@@ -3,12 +3,10 @@
 #include "uvsensor_controller.h"
 
 // return water level reading in JSON format
-const char *get_formatted_uv_sensor_reading()
+void get_formatted_uv_sensor_reading(char *buffer)
 {
-    char buffer[128];
     sprintf(buffer, "\"UVLight\": %d",
             uvsensor_read());
-    return buffer;
 }
 
 // write water level reading in pc_commm

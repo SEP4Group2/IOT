@@ -31,16 +31,16 @@ int main(void)
   pc_comm_init(9600, NULL);
   pc_comm_send_string_blocking("LOADING!\n");
 
-  // Should be moved to EEPROM controller and methods used from there
-  // EEPROM save test
-  int data = 67;
-  writeFloatToEEPROM(data);
+  // // Should be moved to EEPROM controller and methods used from there
+  // // EEPROM save test
+  // int data = 67;
+  // writeFloatToEEPROM(data);
 
-  // EEPROM read test
-  char buffers[128];
+  // // EEPROM read test
+  // char buffers[128];
 
-  sprintf(buffers, "Data read from EEPROM: %d\n", readFloatFromEEPROM());
-  pc_comm_send_string_blocking(buffers);
+  // sprintf(buffers, "Data read from EEPROM: %d\n", readFloatFromEEPROM());
+  // pc_comm_send_string_blocking(buffers);
 
   // initialize all sensor controllers
   init_controllers();
@@ -53,25 +53,22 @@ int main(void)
   void callCallback()
   {
     callbackTest(receiveParameter);
-    char buffer[128];
-    char buffer2[128];
-    char buffer3[128];
-    sprintf(buffer, "callCallback  Communication controller &: %d\n", &receiveParameter);
-    sprintf(buffer2, "callCallback  Communication controller: %d\n", receiveParameter);
-    sprintf(buffer3, "callCallback  Communication controller*: %d\n", *receiveParameter);
-
-    pc_comm_send_string_blocking(buffer);
-    pc_comm_send_string_blocking(buffer2);
-    pc_comm_send_string_blocking(buffer3);
   }
 
   // Create TCP connection
   WIFI_ERROR_MESSAGE_t server_connection_status = wifi_command_create_TCP_connection(getTCP_IP(), getTCP_PORT(), callCallback, receiveParameter);
+  if (server_connection_status == WIFI_OK)
+  {
+    pc_comm_send_string_blocking("\nREADY!\n\n");
+  }
   pc_comm_send_string_blocking(testTcpConnection(server_connection_status));
 
   char buffer[128];
-
-  pc_comm_send_string_blocking("\nREADY!\n\n");
+  char water_level_buffer[128];
+  char moisture_buffer[128];
+  char uv_sensor_buffer[128];
+  char temperature_buffer[128];
+  char humidity_buffer[128];
 
   timer_init_a(&button_1_check, 100);
 
@@ -80,10 +77,17 @@ int main(void)
     // initialize the humidity and temperature sensor
     get_dht11_sensor_data();
 
-    sprintf(buffer, "{%d,%d,%d%,%d,%d}",
-            get_formatted_water_level_reading(), get_formatted_moisture_reading(), get_formatted_uv_sensor_reading(), get_formatted_temperature_reading(), get_formatted_humidity_reading());
+    get_formatted_water_level_reading(water_level_buffer);
+    get_formatted_moisture_reading(moisture_buffer);
+    get_formatted_uv_sensor_reading(uv_sensor_buffer);
+    get_formatted_temperature_reading(temperature_buffer);
+    get_formatted_humidity_reading(humidity_buffer);
+
+    sprintf(buffer, "{%s,%s,%s,%s,%s,}\n",
+            water_level_buffer, moisture_buffer, uv_sensor_buffer, temperature_buffer, humidity_buffer);
 
     pc_comm_send_string_blocking(buffer);
+
     wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
 
     // pump_run();

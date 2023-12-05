@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-const char *get_formatted_uv_sensor_reading();
+void get_formatted_uv_sensor_reading(char *buffer);
 
 void print_uv_sensor_reading();
 

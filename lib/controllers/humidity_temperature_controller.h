@@ -2,9 +2,9 @@
 void get_dht11_sensor_data();
 
 // return  temperature or humidity reading in JSON format
-const char *get_formatted_temperature_reading();
+void get_formatted_temperature_reading(char *buffer);
 
-const char *get_formatted_humidity_reading();
+void get_formatted_humidity_reading(char *buffer);
 
 // write  temperature or humidity reading in pc_commm
 void print_humidity_reading();

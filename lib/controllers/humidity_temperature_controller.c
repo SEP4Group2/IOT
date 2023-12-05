@@ -17,10 +17,8 @@ void get_dht11_sensor_data()
 }
 
 // return  temperature or humidity reading in JSON format
-const char *get_formatted_temperature_reading()
+void get_formatted_temperature_reading(char *buffer)
 {
-
-    char buffer[128];
     if (temperature_decimal == -99 && temperature_integer == -99)
     {
         sprintf(buffer, "\"Temperature\": \"Error!\"");
@@ -33,10 +31,8 @@ const char *get_formatted_temperature_reading()
     return buffer;
 }
 
-const char *get_formatted_humidity_reading()
+void get_formatted_humidity_reading(char *buffer)
 {
-
-    char buffer[128];
     if (humidity_decimal == -99 && humidity_integer == -99)
     {
         sprintf(buffer, "\"Humidity\": \"Error!\"");

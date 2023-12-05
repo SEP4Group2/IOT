@@ -2,12 +2,10 @@
 #include "pc_comm.h"
 
 // return water level reading in JSON format
-const char *get_formatted_water_level_reading()
+void get_formatted_water_level_reading(char *buffer)
 {
-    char buffer[128];
     sprintf(buffer, "\"TankLevel\": %d",
             hc_sr04_takeMeasurement());
-    return buffer;
 }
 
 // write water level reading in pc_commm
@@ -19,5 +17,6 @@ void print_water_level_reading()
 // return water level reading
 uint16_t get_water_level_reading()
 {
+
     return hc_sr04_takeMeasurement();
 }
