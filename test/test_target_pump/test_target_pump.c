@@ -1,21 +1,6 @@
 #include "pump.h"
 #include "unity.h"
-
-uint8_t DDRH;   // Data Direction Register H
-uint8_t PORTH;  // Port H
-
-void setUp(void) {
-    // Initialize mock hardware registers to a known state
-    DDRH = 0x00;   // Set DDRH to 0x00 initially
-    PORTH = 0xFF;  // Set PORTH to all high initially
-}
-
-void tearDown(void) {
-    // Reset mock hardware registers after each test (if needed)
-
-    DDRH = 0x00;
-    PORTH = 0xFF;
-}
+#include <avr/io.h> // Include AVR IO definitions
 
 void test_pump_init(void) {
     // Call the pump initialization function
@@ -29,6 +14,10 @@ void test_pump_init(void) {
 }
 
 void test_pump_turnOn(void) {
+    // Initialize DDRH and PORTH to known states before the test
+    DDRH |= (1 << 6);   // Set DDRH bit 6 as an output
+    PORTH |= (1 << 6);  // Set PORTH bit 6 initially (simulate off state)
+
     // Call the pump turnOn function
     pump_turnOn();
 
@@ -37,6 +26,10 @@ void test_pump_turnOn(void) {
 }
 
 void test_pump_turnOff(void) {
+    // Initialize DDRH and PORTH to known states before the test
+    DDRH |= (1 << 6);   // Set DDRH bit 6 as an output
+    PORTH &= ~(1 << 6); // Clear PORTH bit 6 initially (simulate on state)
+
     // Call the pump turnOff function
     pump_turnOff();
 
