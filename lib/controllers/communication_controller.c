@@ -4,6 +4,7 @@
 #include "communication_controller.h"
 #include "pc_comm.h"
 #include "display_controller.h"
+#include "pump_controller.h"
 
 char *testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode)
 {
@@ -65,40 +66,36 @@ char *testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode)
 
 void callbackTest(char *received_message_ptr)
 {
+    char *endptr;
+    long received_message_long = strtol(received_message_ptr, &endptr, 10);
 
-    writeToDisplay(received_message_ptr);
+    int code = received_message_long / 100;
 
-    char buffer[128];
-    char buffer2[128];
-    char buffer3[128];
-    sprintf(buffer, "Communication controller &: %d\n", &received_message_ptr);
-    sprintf(buffer2, "Communication controller: %d\n", received_message_ptr);
-    sprintf(buffer3, "Communication controller*: %d\n", *received_message_ptr);
-    
-    pc_comm_send_string_blocking(buffer);
-    pc_comm_send_string_blocking(buffer2);   
-    pc_comm_send_string_blocking(buffer3);
+    char mama[128];
+    sprintf(mama, "Received: INT from ESP8266 is: %d \n", code);
+    pc_comm_send_string_blocking(mama);
 
-    switch (received_message_ptr[0])
+    switch (code)
     {
-    case '0':
-        pc_comm_send_string_blocking("\nGOOD\n");
-        // Handle case '0', whatever is required
+    case 161616:
+        if (received_message_long == 16161601)
+        {
+            pump_run();
+            pc_comm_send_string_blocking("RUNNING THE PUMP");
+        }
         break;
 
-    case '1':
-        pc_comm_send_string_blocking("\nBAD\n");
-        // Handle case '1', whatever is required
-        break;
-
-    case '2':
-        pc_comm_send_string_blocking("\nDEAD\n");
-        // Handle case '2', whatever is required
+    case 999999:
+        // write in apriom memory
+        pc_comm_send_string_blocking("WRITING THE MEMORY");
         break;
 
     default:
-        pc_comm_send_string_blocking("\nUnknown case\n");
-        // Handle default case, whatever is required
+        writeToDisplay(received_message_ptr);
         break;
     }
+
+    char buffer[128];
+    sprintf(buffer, "Communication controller: %s\n", received_message_ptr);
+    pc_comm_send_string_blocking(buffer);
 }
