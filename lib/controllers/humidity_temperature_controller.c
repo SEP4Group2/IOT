@@ -1,5 +1,6 @@
 #include "dht11.h"
 #include "pc_comm.h"
+#include "humidity_temperature_controller.h"
 
 uint8_t humidity_integer, humidity_decimal, temperature_integer, temperature_decimal; // Variables for humidity and temperature
 

@@ -2,6 +2,7 @@
 #include "includes.h"
 #include "buttons.h"
 #include "display.h"
+#include "pump_controller.h"
 
 
 void pump_run_timeout(int miliseconds)

@@ -1,1 +1,1 @@
-init_controllers();
+void init_controllers();

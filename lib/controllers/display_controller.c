@@ -1,5 +1,6 @@
 #include "display.h"
 #include "includes.h"
+#include "display_controller.h"
 
 const void writeToDisplay(uint8_t receiveParameter)
 {

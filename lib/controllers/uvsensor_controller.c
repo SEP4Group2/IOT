@@ -1,5 +1,6 @@
 #include "uvsensor.h"
 #include "pc_comm.h"
+#include "uvsensor_controller.h"
 
 // return water level reading in JSON format
 const char *get_formatted_uv_sensor_reading()

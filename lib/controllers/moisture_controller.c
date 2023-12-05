@@ -1,5 +1,6 @@
 #include "moisture.h"
 #include "pc_comm.h"
+#include "moisture_controller.h"
 
 // return moisture reading in JSON format
 const char *get_formatted_moisture_reading()

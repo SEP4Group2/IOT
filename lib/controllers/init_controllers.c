@@ -1,4 +1,5 @@
 // Description: Initializes all controllers.
+#include "init_controllers.h"
 
 #include "dht11.h"
 #include "display.h"
