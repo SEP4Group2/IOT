@@ -64,6 +64,7 @@ int main(void)
   pc_comm_send_string_blocking(testTcpConnection(server_connection_status));
 
   char buffer[128];
+  char buffer_id[128];
   char water_level_buffer[128];
   char moisture_buffer[128];
   char uv_sensor_buffer[128];
@@ -73,8 +74,11 @@ int main(void)
 
   timer_init_a(&button_1_check, 100);
 
-  sprintf(buffer, "{\"DataType\": 0, \"Data\": \"{\\\"DeviceId\\\": %d}\"}",
+  sprintf(buffer_id, "{\"DataType\": 0, \"Data\": \"{\\\"DeviceId\\\": %d}\"}",
         readFloatFromEEPROM());
+        pc_comm_send_string_blocking(buffer_id);
+
+  wifi_command_TCP_transmit((uint8_t *)buffer_id, strlen(buffer_id));
 
   while (1)
   {
@@ -88,7 +92,7 @@ int main(void)
     get_formatted_humidity_reading(humidity_buffer);
 
 
-    if boolean = 1
+    if (boolean = 1)
     {
         sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{\\\"DeviceId\\\": %d, %s, %s, %s, %s, %s}\"}",
           readFloatFromEEPROM(), humidity_buffer, temperature_buffer, uv_sensor_buffer, moisture_buffer, water_level_buffer);

@@ -7,8 +7,6 @@
 #include "pump_controller.h"
 #include "eeprom_controller.h"
 
-int booleanValue = 0;
-
 char *testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode)
 {
     static char buffer[100];
@@ -75,9 +73,9 @@ void callback(char *received_message_ptr)
     int code = received_message_long / 100;
     int id = (int)received_message_long % 100;
 
-    char buffer[128];
-    sprintf(buffe, "Received: INT from ESP8266 is: %d \n", code);
-    pc_comm_send_string_blocking(buffe);
+    char buff[128];
+    sprintf(buff, "Received: INT from ESP8266 is: %d \n", code);
+    pc_comm_send_string_blocking(buff);
 
     switch (code)
     {
@@ -89,7 +87,7 @@ void callback(char *received_message_ptr)
         }
         if (received_message_long == 16161602)
         {
-            setBooleanValue();
+            
         }
         break;
 
@@ -106,21 +104,5 @@ void callback(char *received_message_ptr)
     char buffer[128];
     sprintf(buffer, "Communication controller: %s\n", received_message_ptr);
     pc_comm_send_string_blocking(buffer);
-}
-
-void setBooleanValue()
-{
-    if (booleanValue = 0)
-    {
-        booleanValue = 1;
-    }
-    // else
-    // {
-    //     booleanValue = 0;
-    // }
-}
-int getBooleanValue()
-{
-    return booleanValue;
 }
 
