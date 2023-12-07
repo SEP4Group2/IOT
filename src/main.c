@@ -52,7 +52,7 @@ int main(void)
 
   void callCallback()
   {
-    callbackTest(receiveParameter);
+    callback(receiveParameter);
   }
 
   // Create TCP connection
@@ -69,8 +69,12 @@ int main(void)
   char uv_sensor_buffer[128];
   char temperature_buffer[128];
   char humidity_buffer[128];
+  int boolean = 0;
 
   timer_init_a(&button_1_check, 100);
+
+  sprintf(buffer, "{\"DataType\": 0, \"Data\": \"{\\\"DeviceId\\\": %d}\"}",
+        readFloatFromEEPROM());
 
   while (1)
   {
@@ -83,10 +87,16 @@ int main(void)
     get_formatted_temperature_reading(temperature_buffer);
     get_formatted_humidity_reading(humidity_buffer);
 
-    sprintf(buffer, "{%s,%s,%s,%s,%s,}\n",
-            water_level_buffer, moisture_buffer, uv_sensor_buffer, temperature_buffer, humidity_buffer);
 
-    pc_comm_send_string_blocking(buffer);
+    if boolean = 1
+    {
+        sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{\\\"DeviceId\\\": %d, %s, %s, %s, %s, %s}\"}",
+          readFloatFromEEPROM(), humidity_buffer, temperature_buffer, uv_sensor_buffer, moisture_buffer, water_level_buffer);
+    }
+
+    
+
+    // pc_comm_send_string_blocking(buffer);
 
     wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
 

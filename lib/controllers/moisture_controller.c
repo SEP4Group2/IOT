@@ -5,7 +5,7 @@
 // return moisture reading in JSON format
 void get_formatted_moisture_reading(char *buffer)
 {
-    sprintf(buffer, "\"Moisture\": %d",
+    sprintf(buffer, "\\\"Moisture\\\": %d",
             moisture_read());
 }
 

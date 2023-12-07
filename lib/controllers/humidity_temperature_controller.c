@@ -25,7 +25,7 @@ void get_formatted_temperature_reading(char *buffer)
     }
     else
     {
-        sprintf(buffer, "\"Temperature\": %d.%d",
+        sprintf(buffer, "\\\"Temperature\\\": %d.%d",
                 temperature_integer, temperature_decimal);
     }
     return buffer;
@@ -39,7 +39,7 @@ void get_formatted_humidity_reading(char *buffer)
     }
     else
     {
-        sprintf(buffer, "\"Humidity\": %d.%d",
+        sprintf(buffer, "\\\"Humidity\\\": %d.%d",
                 humidity_integer, humidity_decimal);
     }
     return buffer;

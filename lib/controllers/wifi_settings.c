@@ -3,7 +3,7 @@
 // For Adrian
 #define WIFI_SSID "ONEPLUS"
 #define WIFI_PASSWORD "trudnehaslo"
-#define TCP_IP "192.168.20.240"
+#define TCP_IP "192.168.20.26"
 #define TCP_PORT 23
 
 // // For Kevin
@@ -26,17 +26,17 @@
 // #define TCP_IP "192.168.20.240"
 // #define TCP_PORT 23
 
-const char *getWIFI_SSID()
+char *getWIFI_SSID()
 {
     return WIFI_SSID;
 }
 
-const char *getWIFI_PASSWORD()
+char *getWIFI_PASSWORD()
 {
     return WIFI_PASSWORD;
 }
 
-const char *getTCP_IP()
+char *getTCP_IP()
 {
     return TCP_IP;
 }

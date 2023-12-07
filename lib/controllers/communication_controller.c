@@ -5,6 +5,9 @@
 #include "pc_comm.h"
 #include "display_controller.h"
 #include "pump_controller.h"
+#include "eeprom_controller.h"
+
+int booleanValue = 0;
 
 char *testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode)
 {
@@ -64,16 +67,17 @@ char *testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode)
     return buffer;
 }
 
-void callbackTest(char *received_message_ptr)
+void callback(char *received_message_ptr)
 {
     char *endptr;
     long received_message_long = strtol(received_message_ptr, &endptr, 10);
 
     int code = received_message_long / 100;
+    int id = (int)received_message_long % 100;
 
-    char mama[128];
-    sprintf(mama, "Received: INT from ESP8266 is: %d \n", code);
-    pc_comm_send_string_blocking(mama);
+    char buffer[128];
+    sprintf(buffe, "Received: INT from ESP8266 is: %d \n", code);
+    pc_comm_send_string_blocking(buffe);
 
     switch (code)
     {
@@ -83,11 +87,15 @@ void callbackTest(char *received_message_ptr)
             pump_run();
             pc_comm_send_string_blocking("RUNNING THE PUMP");
         }
+        if (received_message_long == 16161602)
+        {
+            setBooleanValue();
+        }
         break;
 
     case 999999:
-        // write in apriom memory
-        pc_comm_send_string_blocking("WRITING THE MEMORY");
+        writeFloatToEEPROM(id);
+        pc_comm_send_string_blocking("Writing in memory id: " + id);
         break;
 
     default:
@@ -99,3 +107,20 @@ void callbackTest(char *received_message_ptr)
     sprintf(buffer, "Communication controller: %s\n", received_message_ptr);
     pc_comm_send_string_blocking(buffer);
 }
+
+void setBooleanValue()
+{
+    if (booleanValue = 0)
+    {
+        booleanValue = 1;
+    }
+    // else
+    // {
+    //     booleanValue = 0;
+    // }
+}
+int getBooleanValue()
+{
+    return booleanValue;
+}
+

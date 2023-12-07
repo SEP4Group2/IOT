@@ -5,7 +5,7 @@
 // return water level reading in JSON format
 void get_formatted_uv_sensor_reading(char *buffer)
 {
-    sprintf(buffer, "\"UVLight\": %d",
+    sprintf(buffer, "\\\"UVLight\\\": %d",
             uvsensor_read());
 }
 
