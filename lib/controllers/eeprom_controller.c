@@ -15,3 +15,9 @@ int readFloatFromEEPROM()
   eeprom_read_block(&data, (const void *)EEPROM_FLOAT_START_ADDRESS, 4);
   return data;
 }
+
+void get_formatted_arduino_id(char *buffer)
+{
+  sprintf(buffer, "\\\"DeviceId\\\": %d",
+          readFloatFromEEPROM());
+}

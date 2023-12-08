@@ -70,13 +70,15 @@ int main(void)
   char uv_sensor_buffer[128];
   char temperature_buffer[128];
   char humidity_buffer[128];
-  int boolean = 0;
+  char arduino_id_buffer[128];
 
   timer_init_a(&button_1_check, 100);
 
-  sprintf(buffer_id, "{\"DataType\": 0, \"Data\": \"{\\\"DeviceId\\\": %d}\"}",
-        readFloatFromEEPROM());
-        pc_comm_send_string_blocking(buffer_id);
+  get_formatted_arduino_id(arduino_id_buffer);
+
+  sprintf(buffer_id, "{\"DataType\": 0, \"Data\": %s}",
+          arduino_id_buffer);
+  pc_comm_send_string_blocking(buffer_id);
 
   wifi_command_TCP_transmit((uint8_t *)buffer_id, strlen(buffer_id));
 
@@ -90,19 +92,22 @@ int main(void)
     get_formatted_uv_sensor_reading(uv_sensor_buffer);
     get_formatted_temperature_reading(temperature_buffer);
     get_formatted_humidity_reading(humidity_buffer);
+    get_formatted_arduino_id(arduino_id_buffer);
 
+    int bool = is_data_acknowledged();
 
-    if (boolean = 1)
+    pc_comm_send_string_blocking(bool);
+
+    if (bool)
     {
-        sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{\\\"DeviceId\\\": %d, %s, %s, %s, %s, %s}\"}",
-          readFloatFromEEPROM(), humidity_buffer, temperature_buffer, uv_sensor_buffer, moisture_buffer, water_level_buffer);
+
+      sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{%d, %s, %s, %s, %s, %s}\"}",
+              arduino_id_buffer, humidity_buffer, temperature_buffer, uv_sensor_buffer, moisture_buffer, water_level_buffer);
+      pc_comm_send_string_blocking(buffer);
+
+      // pc_comm_send_string_blocking(buffer);
+      wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
     }
-
-    
-
-    // pc_comm_send_string_blocking(buffer);
-
-    wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
 
     // pump_run();
 
