@@ -65,16 +65,23 @@ char *testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode)
     return buffer;
 }
 
+int data_acknowledged = 0;
+
+int is_data_acknowledged()
+{
+    return data_acknowledged;
+}
+
 void callback(char *received_message_ptr)
 {
     char *endptr;
     long received_message_long = strtol(received_message_ptr, &endptr, 10);
 
     int code = received_message_long / 100;
-    int id = (int)received_message_long % 100;
+    long id = (long)received_message_long % 100;
 
     char buff[128];
-    sprintf(buff, "Received: INT from ESP8266 is: %d \n", code);
+    sprintf(buff, "Received: INT from ESP8266 is: %d \n", received_message_ptr);
     pc_comm_send_string_blocking(buff);
 
     switch (code)
@@ -87,7 +94,8 @@ void callback(char *received_message_ptr)
         }
         if (received_message_long == 16161602)
         {
-            
+            data_acknowledged = 1;
+            pc_comm_send_string_blocking("Start sending data");
         }
         break;
 
@@ -105,4 +113,3 @@ void callback(char *received_message_ptr)
     sprintf(buffer, "Communication controller: %s\n", received_message_ptr);
     pc_comm_send_string_blocking(buffer);
 }
-
