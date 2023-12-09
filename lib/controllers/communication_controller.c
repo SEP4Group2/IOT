@@ -77,11 +77,11 @@ void callback(char *received_message_ptr)
     char *endptr;
     long received_message_long = strtol(received_message_ptr, &endptr, 10);
 
-    int code = received_message_long / 100;
-    long id = (long)received_message_long % 100;
+    long code = received_message_long / 100;
+    int id;
 
     char buff[128];
-    sprintf(buff, "Received: INT from ESP8266 is: %d \n", received_message_ptr);
+    sprintf(buff, "\nCallBack >> Received: Message from Server is: %s\n", received_message_ptr);
     pc_comm_send_string_blocking(buff);
 
     switch (code)
@@ -100,8 +100,11 @@ void callback(char *received_message_ptr)
         break;
 
     case 999999:
+        id = received_message_long % 100;
+        char buff_id[2];
+        sprintf(buff_id, "\nWriting in memory >> %d\n", id);
+        pc_comm_send_string_blocking(buff_id);
         writeFloatToEEPROM(id);
-        pc_comm_send_string_blocking("Writing in memory id: " + id);
         break;
 
     default:

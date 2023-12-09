@@ -10,7 +10,7 @@ const void writeToDisplay(char *receiveParameter)
 
     int part1, part2, part3, part4;
     char message[128];
-    sprintf(message, "Received: INT from ESP8266 is: %ld \n", integerValue);
+    sprintf(message, "Writing to display>>: %s\n", integerValue);
     pc_comm_send_string_blocking(message);
     long totalNumber = integerValue;
 

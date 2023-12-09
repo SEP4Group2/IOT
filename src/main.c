@@ -31,22 +31,10 @@ int main(void)
   pc_comm_init(9600, NULL);
   pc_comm_send_string_blocking("LOADING!\n");
 
-  // // Should be moved to EEPROM controller and methods used from there
-  // // EEPROM save test
-  // int data = 67;
-  // writeFloatToEEPROM(data);
-
-  // // EEPROM read test
-  // char buffers[128];
-
-  // sprintf(buffers, "Data read from EEPROM: %d\n", readFloatFromEEPROM());
-  // pc_comm_send_string_blocking(buffers);
-
   // initialize all sensor controllers
   init_controllers();
 
   // Connect to WiFi
-
   WIFI_ERROR_MESSAGE_t wifi_connection_status = wifi_command_join_AP(getWIFI_SSID(), getWIFI_PASSWORD());
   pc_comm_send_string_blocking(testWifiConnection(wifi_connection_status));
 
@@ -74,14 +62,6 @@ int main(void)
 
   timer_init_a(&button_1_check, 100);
 
-  get_formatted_arduino_id(arduino_id_buffer);
-
-  sprintf(buffer_id, "{\"DataType\": 0, \"Data\": %s}",
-          arduino_id_buffer);
-  pc_comm_send_string_blocking(buffer_id);
-
-  wifi_command_TCP_transmit((uint8_t *)buffer_id, strlen(buffer_id));
-
   while (1)
   {
     // initialize the humidity and temperature sensor
@@ -95,27 +75,29 @@ int main(void)
     get_formatted_arduino_id(arduino_id_buffer);
 
     int bool = is_data_acknowledged();
-
     pc_comm_send_string_blocking(bool);
 
     if (bool)
     {
-
-      sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{%d, %s, %s, %s, %s, %s}\"}",
+      sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{%s, %s, %s, %s, %s, %s}\"}",
               arduino_id_buffer, humidity_buffer, temperature_buffer, uv_sensor_buffer, moisture_buffer, water_level_buffer);
       pc_comm_send_string_blocking(buffer);
 
-      // pc_comm_send_string_blocking(buffer);
       wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
     }
+    if (!bool)
+    {
+      pc_comm_send_string_blocking("\nNOT ACKNOWLEDGED\n");
 
-    // pump_run();
+      get_formatted_arduino_id(arduino_id_buffer);
+      sprintf(buffer_id, "{\"DataType\": 0, \"Data\": \"{%s}\"}",
+              arduino_id_buffer);
+      pc_comm_send_string_blocking(buffer_id);
+      wifi_command_TCP_transmit((uint8_t *)buffer_id, strlen(buffer_id));
+    }
 
-    // testing parameter received from callback
-    //  pc_comm_send_string_blocking(receiveParameter);
-
-    // callbackTest;
-
+    pc_comm_send_string_blocking(receiveParameter);
+    pc_comm_send_string_blocking("\nloop!\n");
     _delay_ms(3000);
   }
 
