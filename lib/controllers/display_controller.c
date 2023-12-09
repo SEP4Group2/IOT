@@ -2,16 +2,20 @@
 #include "includes.h"
 #include "display_controller.h"
 
+long previousDisplayValue = 0;
+
 const void writeToDisplay(char *receiveParameter)
 {
+
     char *endptr;
 
     long integerValue = strtol(receiveParameter, &endptr, 10);
 
     int part1, part2, part3, part4;
     char message[128];
-    sprintf(message, "Writing to display>>: %s\n", integerValue);
+    sprintf(message, "Writing to display>>: %ld\n", integerValue);
     pc_comm_send_string_blocking(message);
+
     long totalNumber = integerValue;
 
     // Truncate and store each 2-digit part
@@ -26,10 +30,10 @@ const void writeToDisplay(char *receiveParameter)
 
     part1 = totalNumber; // The remaining part is stored in part1
 
-    display_setValues(part1, part2, part3, part4);
-    // pc_comm_send_string_blocking("\n SS");
-    pc_comm_send_string_blocking(part1);
-    pc_comm_send_string_blocking(part2);
-    pc_comm_send_string_blocking(part3);
-    pc_comm_send_string_blocking(part4);
+    if (previousDisplayValue != integerValue)
+    {
+        display_setValues(part1, part2, part3, part4);
+    }
+
+    previousDisplayValue = integerValue;
 };

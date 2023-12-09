@@ -3,7 +3,7 @@
 // For Adrian
 #define WIFI_SSID "ONEPLUS"
 #define WIFI_PASSWORD "trudnehaslo"
-#define TCP_IP "192.168.20.26"
+#define TCP_IP "192.168.20.29"
 #define TCP_PORT 3014
 
 // // For Kevin

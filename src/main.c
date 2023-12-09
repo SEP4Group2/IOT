@@ -75,7 +75,6 @@ int main(void)
     get_formatted_arduino_id(arduino_id_buffer);
 
     int bool = is_data_acknowledged();
-    pc_comm_send_string_blocking(bool);
 
     if (bool)
     {
