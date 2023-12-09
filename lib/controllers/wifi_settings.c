@@ -1,10 +1,10 @@
 // uncomment the correct WIFI_SSID, WIFI_PASSWORD, TCP_IP and TCP_PORT for your setup and comment out the others.
 
 // // For Adrian
-// #define WIFI_SSID "ONEPLUS"
-// #define WIFI_PASSWORD "trudnehaslo"
-// #define TCP_IP "192.168.20.26"
-// #define TCP_PORT 23
+#define WIFI_SSID "ONEPLUS"
+#define WIFI_PASSWORD "trudnehaslo"
+#define TCP_IP "192.168.20.240"
+#define TCP_PORT 23
 
 // // For Kevin
 // #define WIFI_SSID "iPhone Kevin"
@@ -26,22 +26,22 @@
 // #define TCP_IP "192.168.20.240"
 // #define TCP_PORT 23
 
-#define WIFI_SSID "18B WiFi"
-#define WIFI_PASSWORD "77777777"
-#define TCP_IP "192.168.20.240"
-#define TCP_PORT 23
+// #define WIFI_SSID "18B WiFi"
+// #define WIFI_PASSWORD "77777777"
+// #define TCP_IP "192.168.20.240"
+// #define TCP_PORT 23
 
-char *getWIFI_SSID()
+const char *getWIFI_SSID()
 {
     return WIFI_SSID;
 }
 
-char *getWIFI_PASSWORD()
+const char *getWIFI_PASSWORD()
 {
     return WIFI_PASSWORD;
 }
 
-char *getTCP_IP()
+const char *getTCP_IP()
 {
     return TCP_IP;
 }

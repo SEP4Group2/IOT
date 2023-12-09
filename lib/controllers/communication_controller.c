@@ -43,22 +43,22 @@ char *testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode)
     switch (errorcode)
     {
     case WIFI_OK:
-        strcpy(buffer, "\nTcp connect OK");
+        strcpy(buffer, "\nTcp connect OK\n");
         break;
     case WIFI_FAIL:
-        strcpy(buffer, "\nTcp connect FAIL");
+        strcpy(buffer, "\nTcp connect FAIL\n");
         break;
     case WIFI_ERROR_RECEIVED_ERROR:
-        strcpy(buffer, "\nTcp connect ERROR");
+        strcpy(buffer, "\nTcp connect ERROR\n");
         break;
     case WIFI_ERROR_NOT_RECEIVING:
-        strcpy(buffer, "\nTcp connect NOT RECEIVING");
+        strcpy(buffer, "\nTcp connect NOT RECEIVING\n");
         break;
     case WIFI_ERROR_RECEIVING_GARBAGE:
-        strcpy(buffer, "\nTcp connect GARBAGE");
+        strcpy(buffer, "\nTcp connect GARBAGE\n");
         break;
     default:
-        strcpy(buffer, "\nUnknown Tcp error");
+        strcpy(buffer, "\nUnknown Tcp error\n");
         break;
     }
 
@@ -72,16 +72,21 @@ int is_data_acknowledged()
     return data_acknowledged;
 }
 
-void callback(char *received_message_ptr)
+#define ACTION_CODE 161616
+#define EEPROM_WRITE_CODE 999999
+
+void callbackTest(char *received_message_ptr)
 {
     char *endptr;
     long received_message_long = strtol(received_message_ptr, &endptr, 10);
+    pc_comm_send_string_blocking(received_message_ptr);
 
-    int code = received_message_long / 100;
-    long id = (long)received_message_long % 100;
+    long code = received_message_long / 100;
+    long id = received_message_long % 100;
+
 
     char buff[128];
-    sprintf(buff, "Received: INT from ESP8266 is: %d \n", received_message_ptr);
+    sprintf(buff, "Received: INT from ESP8266 is: %s \n", received_message_ptr);
     pc_comm_send_string_blocking(buff);
 
     switch (code)
@@ -100,8 +105,11 @@ void callback(char *received_message_ptr)
         break;
 
     case 999999:
+        id = (int)id;
         writeFloatToEEPROM(id);
-        pc_comm_send_string_blocking("Writing in memory id: " + id);
+        char message[128]; 
+        sprintf(message, "Writing in memory id: %ld", id);
+        pc_comm_send_string_blocking(message);
         break;
 
     default:

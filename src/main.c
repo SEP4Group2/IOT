@@ -43,16 +43,18 @@ int main(void)
   // pc_comm_send_string_blocking(buffers);
 
   // initialize all sensor controllers
+
+ 
   init_controllers();
 
   // Connect to WiFi
 
   WIFI_ERROR_MESSAGE_t wifi_connection_status = wifi_command_join_AP(getWIFI_SSID(), getWIFI_PASSWORD());
   pc_comm_send_string_blocking(testWifiConnection(wifi_connection_status));
-
+ 
   void callCallback()
   {
-    callback(receiveParameter);
+    callbackTest(receiveParameter);
   }
 
   // Create TCP connection
@@ -76,7 +78,7 @@ int main(void)
 
   get_formatted_arduino_id(arduino_id_buffer);
 
-  sprintf(buffer_id, "{\"DataType\": 0, \"Data\": %s}",
+  sprintf(buffer_id, "{\"DataType\": 0, \"Data\": \"{%s}\"}",
           arduino_id_buffer);
   pc_comm_send_string_blocking(buffer_id);
 
@@ -96,12 +98,12 @@ int main(void)
 
     int bool = is_data_acknowledged();
 
-    pc_comm_send_string_blocking(bool);
+    // pc_comm_send_string_blocking(bool);
 
-    if (bool)
+    if (bool == 1)
     {
 
-      sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{%d, %s, %s, %s, %s, %s}\"}",
+      sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{%s, %s, %s, %s, %s, %s}\"}",
               arduino_id_buffer, humidity_buffer, temperature_buffer, uv_sensor_buffer, moisture_buffer, water_level_buffer);
       pc_comm_send_string_blocking(buffer);
 
