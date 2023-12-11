@@ -1,4 +1,5 @@
 // write the id inside the EPROM memory to have it saved between sessions
+#ifndef WINDOWS_TEST
 #include "eeprom_controller.h"
 #include "avr/eeprom.h"
 
@@ -21,3 +22,4 @@ void get_formatted_arduino_id(char *buffer)
   sprintf(buffer, "\\\"DeviceId\\\": %d",
           readFloatFromEEPROM());
 }
+#endif
