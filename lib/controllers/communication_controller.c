@@ -2,7 +2,7 @@
 #include "display.h"
 #include "includes.h"
 #include "communication_controller.h"
-#include "pc_comm.h"
+
 #include "display_controller.h"
 #include "pump_controller.h"
 #include "eeprom_controller.h"
@@ -82,7 +82,6 @@ void callback(char *received_message_ptr)
 
     char buff[128];
     sprintf(buff, "\nCallBack >> Received: Message from Server is: %s\n", received_message_ptr);
-    pc_comm_send_string_blocking(buff);
 
     switch (code)
     {
@@ -90,12 +89,10 @@ void callback(char *received_message_ptr)
         if (received_message_long == 16161601)
         {
             pump_run();
-            pc_comm_send_string_blocking("RUNNING THE PUMP");
         }
         if (received_message_long == 16161602)
         {
             data_acknowledged = 1;
-            pc_comm_send_string_blocking("Start sending data");
         }
         break;
 
@@ -103,7 +100,6 @@ void callback(char *received_message_ptr)
         id = received_message_long % 100;
         char buff_id[2];
         sprintf(buff_id, "\nWriting in memory >> %d\n", id);
-        pc_comm_send_string_blocking(buff_id);
         writeFloatToEEPROM(id);
         break;
 
@@ -114,5 +110,4 @@ void callback(char *received_message_ptr)
 
     char buffer[128];
     sprintf(buffer, "Communication controller: %s\n", received_message_ptr);
-    pc_comm_send_string_blocking(buffer);
 }
