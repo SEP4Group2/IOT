@@ -5,7 +5,7 @@
 // return water level reading in JSON format
 void get_formatted_water_level_reading(char *buffer)
 {
-    sprintf(buffer, "\"TankLevel\": %u",
+    sprintf(buffer, "\\\"TankLevel\\\": %u",
             hc_sr04_takeMeasurement());
 }
 

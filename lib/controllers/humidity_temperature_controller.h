@@ -6,11 +6,6 @@ void get_formatted_temperature_reading(char *buffer);
 
 void get_formatted_humidity_reading(char *buffer);
 
-// write  temperature or humidity reading in pc_commm
-void print_humidity_reading();
-
-void print_temperature_reading();
-
 // return temperature or humidity  reading
 uint16_t get_temperature_integer_reading();
 

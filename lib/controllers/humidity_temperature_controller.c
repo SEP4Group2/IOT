@@ -1,5 +1,4 @@
 #include "dht11.h"
-#include "pc_comm.h"
 #include "humidity_temperature_controller.h"
 
 uint8_t humidity_integer, humidity_decimal, temperature_integer, temperature_decimal; // Variables for humidity and temperature
@@ -43,21 +42,6 @@ void get_formatted_humidity_reading(char *buffer)
                 humidity_integer, humidity_decimal);
     }
     return buffer;
-}
-
-// write  temperature or humidity reading in pc_commm
-void print_humidity_reading()
-{
-    char buffer[128];
-    sprintf(buffer, "%d.%d", humidity_integer, humidity_decimal);
-    pc_comm_send_string_blocking(buffer);
-}
-
-void print_temperature_reading()
-{
-    char buffer[128];
-    sprintf(buffer, "%d.%d", temperature_integer, temperature_decimal);
-    pc_comm_send_string_blocking(buffer);
 }
 
 // return temperature or humidity  reading
