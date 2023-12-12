@@ -22,6 +22,16 @@
 #include <stdio.h>
 
 char receiveParameter[16];
+int run_pump = 0;
+WIFI_ERROR_MESSAGE_t server_connection_status;
+int bool;
+
+void callCallback()
+{
+  callback(receiveParameter);
+}
+
+
 
 int main(void)
 {
@@ -38,13 +48,8 @@ int main(void)
   WIFI_ERROR_MESSAGE_t wifi_connection_status = wifi_command_join_AP(getWIFI_SSID(), getWIFI_PASSWORD());
   pc_comm_send_string_blocking(testWifiConnection(wifi_connection_status));
 
-  void callCallback()
-  {
-    callback(receiveParameter);
-  }
-
   // Create TCP connection
-  WIFI_ERROR_MESSAGE_t server_connection_status = wifi_command_create_TCP_connection(getTCP_IP(), getTCP_PORT(), callCallback, receiveParameter);
+  server_connection_status = wifi_command_create_TCP_connection(getTCP_IP(), getTCP_PORT(), callCallback, receiveParameter);
   if (server_connection_status == WIFI_OK)
   {
     pc_comm_send_string_blocking("\nREADY!\n\n");
@@ -64,6 +69,9 @@ int main(void)
 
   while (1)
   {
+
+    check_pump_run();
+
     // initialize the humidity and temperature sensor
     get_dht11_sensor_data();
 
@@ -74,7 +82,7 @@ int main(void)
     get_formatted_humidity_reading(humidity_buffer);
     get_formatted_arduino_id(arduino_id_buffer);
 
-    int bool = is_data_acknowledged();
+    bool = is_data_acknowledged();
 
     if (bool)
     {
@@ -84,6 +92,9 @@ int main(void)
 
       wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
     }
+
+    check_pump_run();
+
     if (!bool)
     {
       pc_comm_send_string_blocking("\nNOT ACKNOWLEDGED\n");
@@ -95,8 +106,11 @@ int main(void)
       wifi_command_TCP_transmit((uint8_t *)buffer_id, strlen(buffer_id));
     }
 
+    check_pump_run();
+
     pc_comm_send_string_blocking(receiveParameter);
     pc_comm_send_string_blocking("\nloop!\n");
+
     _delay_ms(3000);
   }
 

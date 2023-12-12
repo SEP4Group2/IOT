@@ -14,7 +14,6 @@ const void writeToDisplay(char *receiveParameter)
     int part1, part2, part3, part4;
     char message[128];
     sprintf(message, "Writing to display>>: %ld\n", integerValue);
-    pc_comm_send_string_blocking(message);
 
     long totalNumber = integerValue;
 

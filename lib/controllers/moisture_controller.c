@@ -1,5 +1,6 @@
 #include "moisture.h"
 #include "moisture_controller.h"
+#include <stdio.h>
 
 // return moisture reading in JSON format
 void get_formatted_moisture_reading(char *buffer)

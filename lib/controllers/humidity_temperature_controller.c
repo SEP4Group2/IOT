@@ -1,5 +1,6 @@
 #include "dht11.h"
 #include "humidity_temperature_controller.h"
+#include <stdio.h>
 
 uint8_t humidity_integer, humidity_decimal, temperature_integer, temperature_decimal; // Variables for humidity and temperature
 
@@ -16,7 +17,7 @@ void get_dht11_sensor_data()
 }
 
 // return  temperature or humidity reading in JSON format
-void get_formatted_temperature_reading(char *buffer)
+char* get_formatted_temperature_reading(char *buffer)
 {
     if (temperature_decimal == -99 && temperature_integer == -99)
     {
@@ -30,7 +31,7 @@ void get_formatted_temperature_reading(char *buffer)
     return buffer;
 }
 
-void get_formatted_humidity_reading(char *buffer)
+char* get_formatted_humidity_reading(char *buffer)
 {
     if (humidity_decimal == -99 && humidity_integer == -99)
     {

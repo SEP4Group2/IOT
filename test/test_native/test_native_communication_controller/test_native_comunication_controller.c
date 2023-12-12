@@ -1,7 +1,7 @@
 #include "../../fff.h"
 #include "unity.h"
-
 #include "wifi.h"
+#include "communication_controller.h"
 
 DEFINE_FFF_GLOBALS;
 

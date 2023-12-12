@@ -2,6 +2,7 @@
 #ifndef WINDOWS_TEST
 #include "eeprom_controller.h"
 #include "avr/eeprom.h"
+#include <stdio.h>
 
 #define EEPROM_FLOAT_START_ADDRESS 4090
 

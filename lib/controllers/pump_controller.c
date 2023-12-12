@@ -4,6 +4,7 @@
 #include "display.h"
 #include "pump_controller.h"
 
+extern int run_pump;
 
 void pump_run_timeout(int miliseconds)
 {
@@ -15,27 +16,31 @@ void pump_run_timeout(int miliseconds)
 void pump_run()
 {
     pump_run_timeout(3000);
-    pc_comm_send_string_blocking("Pump turned on\n");
-
 }
 
 void pump_stop()
 {
     pump_turnOff();
-    pc_comm_send_string_blocking("Pump turned off\n");
 }
 
 void pump_run_1_second()
 {
     pump_run_timeout(1000);
-    pc_comm_send_string_blocking("Pump turned on for 1 second\n");
 }
 
-void *button_1_check()
+void button_1_check()
 {
   if (buttons_1_pressed() == 1)
   {
-    display_setValues(13, 14, 10, 13);
-    pump_run_timeout(2000);
+    run_pump = 1;
+  }
+}
+
+void check_pump_run()
+{
+  if (run_pump == 1)
+  {
+    pump_run();
+    run_pump = 0;
   }
 }

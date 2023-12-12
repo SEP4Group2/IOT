@@ -7,6 +7,8 @@
 #include "pump_controller.h"
 #include "eeprom_controller.h"
 
+extern int run_pump;
+
 char *testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode)
 {
     static char buffer[100];
@@ -88,7 +90,7 @@ void callback(char *received_message_ptr)
     case 161616:
         if (received_message_long == 16161601)
         {
-            pump_run();
+           run_pump = 1;
         }
         if (received_message_long == 16161602)
         {
