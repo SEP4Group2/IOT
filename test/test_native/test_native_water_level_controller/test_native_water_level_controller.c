@@ -26,7 +26,7 @@ void test_get_formatted_water_level_reading() {
     hc_sr04_takeMeasurement_fake.return_val = 50;
     get_formatted_water_level_reading(buffer);
 
-    TEST_ASSERT_EQUAL_STRING("\"TankLevel\": 50", buffer);
+    TEST_ASSERT_EQUAL_STRING("\\\"TankLevel\\\": 50", buffer);
 }
 
 void test_get_water_level_reading() {

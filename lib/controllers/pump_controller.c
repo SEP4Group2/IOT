@@ -9,7 +9,9 @@ extern int run_pump;
 void pump_run_timeout(int miliseconds)
 {
     pump_turnOn();
+    #ifndef WINDOWS_TEST
     _delay_ms(miliseconds);
+    #endif
     pump_turnOff();
 }
 
