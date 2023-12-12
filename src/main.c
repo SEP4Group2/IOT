@@ -1,7 +1,6 @@
 #include "includes.h"
 #include "pc_comm.h"
 #include "display.h"
-#include "leds.h"
 #include "buttons.h"
 #include "periodic_task.h"
 #include "wifi.h"
@@ -90,7 +89,6 @@ int main(void)
 
       wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
     }
-
 
     if (!bool)
     {
