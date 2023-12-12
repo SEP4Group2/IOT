@@ -86,6 +86,7 @@ int main(void)
       sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{%s, %s, %s, %s, %s, %s}\"}",
               arduino_id_buffer, humidity_buffer, temperature_buffer, uv_sensor_buffer, moisture_buffer, water_level_buffer);
       pc_comm_send_string_blocking(buffer);
+      
 
       wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
     }
@@ -108,7 +109,7 @@ int main(void)
       check_pump_run();
       _delay_ms(100);
     }
+  pc_comm_send_string_blocking("\n");
   }
-
   return 0;
 }
