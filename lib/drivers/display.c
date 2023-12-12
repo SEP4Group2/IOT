@@ -1,3 +1,4 @@
+#ifndef EXCLUDE_DISPLAY
 #include "display.h"
 #include "includes.h"
 //LATCH
@@ -45,6 +46,8 @@ void display_setValues(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t seg4)
     display_data[2] = seg3;
     display_data[3] = seg4;
 }
+
+
 
 // Function to update the display_data[] array with the digits of a signed integer value
 // Input: value - a signed integer between -999 and 9999
@@ -160,3 +163,4 @@ void pulse_latch()
     LATCH_PORT &= ~(1 << LATCH_BIT);
     // _delay_us(1);
 }
+#endif

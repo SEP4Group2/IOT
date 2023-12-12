@@ -4,7 +4,7 @@
 
 long previousDisplayValue = 0;
 
-const void writeToDisplay(char *receiveParameter)
+void writeToDisplay(char *receiveParameter)
 {
 
     char *endptr;
@@ -12,9 +12,9 @@ const void writeToDisplay(char *receiveParameter)
     long integerValue = strtol(receiveParameter, &endptr, 10);
 
     int part1, part2, part3, part4;
-    char message[128];
-    sprintf(message, "Writing to display>>: %ld\n", integerValue);
-    pc_comm_send_string_blocking(message);
+    // char message[128];
+    // sprintf(message, "Writing to display>>: %ld\n", integerValue);
+    // pc_comm_send_string_blocking(message);
 
     long totalNumber = integerValue;
 

@@ -1,62 +1,71 @@
-/*#include "../../fff.h"
-#include "unity.h"
+#include "../../fff.h"
 #include "eeprom_controller.h"
+#include "avr/eeprom.h"
+#include <string.h>
+#include <stdio.h>
+#include <unity.h>
+
+// Define the start address of the EEPROM
+#define EEPROM_FLOAT_START_ADDRESS 4090
 
 DEFINE_FFF_GLOBALS;
 
-void setUp(void)
-{
-    // Initialize the fakes
+// Declare FFF-defined fake functions for eeprom.h
+FAKE_VOID_FUNC(eeprom_write_block, const void *, void *, size_t);
+FAKE_VOID_FUNC(eeprom_read_block, void *, const void *, size_t);
+
+void setUp() {
+    // Initialize FFF and reset fake functions before each test
     FFF_RESET_HISTORY();
+    RESET_FAKE(eeprom_write_block);
+    RESET_FAKE(eeprom_read_block);
 }
 
-void tearDown(void)
-{
-    // Clean up after the test
+void tearDown() {
+    // Clean up after each test if needed
 }
 
-
-// Mocking EEPROM functions
-FAKE_VOID_FUNC(eeprom_write_block, const void*, void*, size_t);
-FAKE_VALUE_FUNC(uint8_t, eeprom_read_block, const void*, void*, size_t);
-
-#define EEPROM_FLOAT_START_ADDRESS 4090
-
-void testWriteReadToEEPROM(void) {
+void test_writeFloatToEEPROM() {
     int data = 42;
 
-    // Set the expected data value for read
-    eeprom_read_block_fake.return_val = 1;
-    eeprom_read_block_fake.arg0_val = &data;
+    // Define a pointer to the EEPROM start address
+    const void *expected_address = (const void *)EEPROM_FLOAT_START_ADDRESS;
 
-    // Call the function to be tested
+    // Simulate EEPROM write
     writeFloatToEEPROM(data);
 
-    // Check the expected behavior
-    TEST_ASSERT_EQUAL(1, eeprom_write_block_fake.call_count);
+    // Ensure eeprom_write_block was called with correct parameters
     TEST_ASSERT_EQUAL_PTR(&data, eeprom_write_block_fake.arg0_val);
-    TEST_ASSERT_EQUAL_PTR((void *)EEPROM_FLOAT_START_ADDRESS, eeprom_write_block_fake.arg1_val);
-    TEST_ASSERT_EQUAL(4, eeprom_write_block_fake.arg2_val);
+    TEST_ASSERT_EQUAL_PTR(expected_address, eeprom_write_block_fake.arg1_val);
+    TEST_ASSERT_EQUAL_INT(4, eeprom_write_block_fake.arg2_val);
+}
 
-    // Now, test the read function
-    int result = readFloatFromEEPROM();
-    TEST_ASSERT_EQUAL(1, eeprom_read_block_fake.call_count);
+void test_readFloatFromEEPROM() {
+    int expected_data = 42;
+    int data;
+
+    // Set up fake return data
+    eeprom_read_block_fake.arg0_val = &expected_data;
+
+    // Define a pointer to the EEPROM start address
+    const void *expected_address = (const void *)EEPROM_FLOAT_START_ADDRESS;
+
+    // Simulate EEPROM read
+    data = readFloatFromEEPROM();
+
+    // Ensure eeprom_read_block was called with correct parameters
     TEST_ASSERT_EQUAL_PTR(&data, eeprom_read_block_fake.arg0_val);
-    TEST_ASSERT_EQUAL_PTR((const void *)EEPROM_FLOAT_START_ADDRESS, eeprom_read_block_fake.arg1_val);
-    TEST_ASSERT_EQUAL(4, eeprom_read_block_fake.arg2_val);
-    TEST_ASSERT_EQUAL(42, result);
+    TEST_ASSERT_EQUAL_PTR(expected_address, eeprom_read_block_fake.arg1_val); // Compare pointers
+    TEST_ASSERT_EQUAL_INT(4, eeprom_read_block_fake.arg2_val);
+
+    // Ensure the returned data is correct
+    TEST_ASSERT_EQUAL_INT(expected_data, data);
 }
 
-// Add more test functions as needed
 
-int main(void) {
+int main() {
     UNITY_BEGIN();
-
-    // Run the tests
-    RUN_TEST(testWriteReadToEEPROM);
-
-    UNITY_END();
-
-    return 0;
+    RUN_TEST(test_writeFloatToEEPROM);
+    RUN_TEST(test_readFloatFromEEPROM);
+    return UNITY_END();
 }
-*/
