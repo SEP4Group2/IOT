@@ -2,10 +2,13 @@
 #include "display.h"
 #include "includes.h"
 #include "communication_controller.h"
-
 #include "display_controller.h"
 #include "pump_controller.h"
 #include "eeprom_controller.h"
+
+#ifndef WINDOWS_TEST
+#include "pc_comm.h"
+#endif
 
 extern int run_pump;
 
@@ -84,6 +87,9 @@ void callback(char *received_message_ptr)
 
     char buff[128];
     sprintf(buff, "\nCallBack >> Received: Message from Server is: %s\n", received_message_ptr);
+    #ifndef WINDOWS_TEST
+    pc_comm_send_string_blocking(buff);
+    #endif
 
     switch (code)
     {
@@ -100,8 +106,7 @@ void callback(char *received_message_ptr)
 
     case 999999:
         id = received_message_long % 100;
-        char buff_id[2];
-        sprintf(buff_id, "\nWriting in memory >> %d\n", id);
+
         writeFloatToEEPROM(id);
         break;
 
@@ -109,7 +114,4 @@ void callback(char *received_message_ptr)
         writeToDisplay(received_message_ptr);
         break;
     }
-
-    char buffer[128];
-    sprintf(buffer, "Communication controller: %s\n", received_message_ptr);
 }

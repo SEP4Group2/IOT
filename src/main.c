@@ -21,22 +21,30 @@
 #include <string.h>
 #include <stdio.h>
 
+//Declare working variables
 char receiveParameter[16];
 int run_pump = 0;
 WIFI_ERROR_MESSAGE_t server_connection_status;
 int bool;
+
+//Declare arrays for sensor data
+char buffer[128];
+char buffer_id[128];
+char water_level_buffer[128];
+char moisture_buffer[128];
+char uv_sensor_buffer[128];
+char temperature_buffer[128];
+char humidity_buffer[128];
+char arduino_id_buffer[128];
 
 void callCallback()
 {
   callback(receiveParameter);
 }
 
-
-
 int main(void)
 {
 
-  // Should probably be moved to communication controller
   // Init for pc_comm
   pc_comm_init(9600, NULL);
   pc_comm_send_string_blocking("LOADING!\n");
@@ -56,21 +64,10 @@ int main(void)
   }
   pc_comm_send_string_blocking(testTcpConnection(server_connection_status));
 
-  char buffer[128];
-  char buffer_id[128];
-  char water_level_buffer[128];
-  char moisture_buffer[128];
-  char uv_sensor_buffer[128];
-  char temperature_buffer[128];
-  char humidity_buffer[128];
-  char arduino_id_buffer[128];
-
   timer_init_a(&button_1_check, 100);
 
   while (1)
   {
-
-    check_pump_run();
 
     // initialize the humidity and temperature sensor
     get_dht11_sensor_data();
@@ -93,7 +90,6 @@ int main(void)
       wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
     }
 
-    check_pump_run();
 
     if (!bool)
     {
@@ -106,12 +102,12 @@ int main(void)
       wifi_command_TCP_transmit((uint8_t *)buffer_id, strlen(buffer_id));
     }
 
-    check_pump_run();
-
-    pc_comm_send_string_blocking(receiveParameter);
-    pc_comm_send_string_blocking("\nloop!\n");
-
-    _delay_ms(3000);
+    //Loop to check button press every 100ms for 10s
+    for (int i=0; i < 100; i++)
+    {
+      check_pump_run();
+      _delay_ms(100);
+    }
   }
 
   return 0;
