@@ -1,5 +1,4 @@
 #include "wifi.h"
-#include "display.h"
 #include "includes.h"
 #include "communication_controller.h"
 #include "display_controller.h"

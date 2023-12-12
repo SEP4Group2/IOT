@@ -24,8 +24,7 @@
  */
 
 // TODO -this is a definition for used only to pass the testing, need to be removed/testes with the real sensor
-#undef MUX0
-#define MUX0 1
+#define MUX0 0
 #define MUX2 2
 #define ADC5D 5
 // TODO until here -remove 
