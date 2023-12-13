@@ -39,6 +39,6 @@ jobs:
 
       - name: Build and Test
         run: |
-          g++ -o test_native -DWINDOWS_TEST=1 -DNATIVE_TEST=1 -Ilib/controllers -Ilib/drivers test/test_native_water_level_controller.c
+          g++ -o test_native -DWINDOWS_TEST=1 -DNATIVE_TEST=1 -Ilib/controllers -Ilib/drivers test/test_native/test_native_water_level_controller.c
           ./test_native
 
