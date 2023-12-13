@@ -41,25 +41,25 @@ jobs:
         run: pip install --upgrade platformio
 
       - name: Run Water Level Controller Test
-        run: pio test -e test_native -f "test_native_water_level_controller.c"
+        run: pio test -e test_native -f "test_native_water_level_controller.c" -v
 
       - name: Run Communication Controller Test
-        run: pio test -e test_native -f "test_native_communication_controller.c"
+        run: pio test -e test_native -f "test_native_communication_controller.c" -v
 
       - name: Run Display Controller Test
-        run: pio test -e test_native -f "test_native_display_controller.c"
+        run: pio test -e test_native -f "test_native_display_controller.c" -v
 
       - name: Run EEPROM Controller Test
-        run: pio test -e test_native -f "test_native_eeprom.controller.c"
+        run: pio test -e test_native -f "test_native_eeprom.controller.c" -v
 
       - name: Run Humidity Temperature Controller Test
-        run: pio test -e test_native -f "test_native_humidity_temperature_controller.c"
+        run: pio test -e test_native -f "test_native_humidity_temperature_controller" -v
 
       - name: Run Moisture Controller Test
-        run: pio test -e test_native -f "test_native_moisture_controller.c"
+        run: pio test -e test_native -f "test_native_moisture_controller" -v
 
       - name: Run Pump Controller Test
-        run: pio test -e test_native -f "test_native_pump_controller.c"
+        run: pio test -e test_native -f "test_native_pump_controller" -v
 
       - name: Run UV Sensor Controller Test
-        run: pio test -e test_native -f "test_native_uvsensor_controller.c"
+        run: pio test -e test_native -f "test_native_uvsensor_controller" -v
