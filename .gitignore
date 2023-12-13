@@ -1,4 +1,5 @@
 .pio
+!.pio/build
 .vscode
 .\lib\controllers\wifi_settings.c
 #.vscode/.browse.c_cpp.db*
