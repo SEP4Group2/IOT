@@ -1,2 +1,3 @@
-void pump_init(void);
-void pump_run_timeout(int miliseconds);
+void pump_init();
+void pump_turnOn();
+void pump_turnOff();

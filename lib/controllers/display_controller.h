@@ -1,0 +1,1 @@
+const void writeToDisplay(char *receiveParameter);

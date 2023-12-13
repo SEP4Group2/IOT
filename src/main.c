@@ -1,115 +1,113 @@
 #include "includes.h"
 #include "pc_comm.h"
-#include "dht11.h"
 #include "display.h"
-#include "leds.h"
-#include "uvsensor.h"
-#include "moisture.h"
-#include "buzzer.h"
 #include "buttons.h"
 #include "periodic_task.h"
-#include "adxl345.h"
-#include "hc_sr04.h"
 #include "wifi.h"
 #include "avr/power.h"
-#include "pir.h"
-#include "tone.h"
-#include "servo.h"
-#include "wifi.h"
-#include "pump.h"
+#include "avr/eeprom.h"
+
+#include "communication_controller.h"
+#include "pump_controller.h"
+#include "wifi_settings.h"
+#include "init_controllers.h"
+#include "humidity_temperature_controller.h"
+#include "water_level_controller.h"
+#include "uvsensor_controller.h"
+#include "moisture_controller.h"
+#include "eeprom_controller.h"
 
 #include <string.h>
 #include <stdio.h>
 
-#define WIFI_SSID "iPhone Kevin "
-#define WIFI_PASSWORD "sockstobee"
-#define TCP_IP "20.107.165.243"
-#define TCP_PORT 23
+//Declare working variables
+char receiveParameter[16];
+int run_pump = 0;
+WIFI_ERROR_MESSAGE_t server_connection_status;
+int bool;
 
-void handle_wifi_error(WIFI_ERROR_MESSAGE_t errorcode, const char* source) {
-  char buffer[100]; // Buffer to store the error message
+//Declare arrays for sensor data
+char buffer[128];
+char buffer_id[128];
+char water_level_buffer[128];
+char moisture_buffer[128];
+char uv_sensor_buffer[128];
+char temperature_buffer[128];
+char humidity_buffer[128];
+char arduino_id_buffer[128];
 
-  switch (errorcode) {
-    case WIFI_OK:
-      sprintf(buffer, "\nWifi connect OK to %s\n", source);
-      break;
-    case WIFI_FAIL:
-      sprintf(buffer, "\nWifi connect FAIL to %s\n", source);
-      break;
-    case WIFI_ERROR_RECEIVED_ERROR:
-      sprintf(buffer, "\nWifi connect ERROR to %s\n", source);
-      break;
-    case WIFI_ERROR_NOT_RECEIVING:
-      sprintf(buffer, "\nWifi connect NOT RECEIVING to %s\n", source);
-      break;
-    case WIFI_ERROR_RECEIVING_GARBAGE:
-      sprintf(buffer, "\nWifi connect GARBAGE to %s\n", source);
-      break;
-    default:
-      sprintf(buffer, "\nUnknown error to %s\n", source);
-      break;
-  }
-
-  pc_comm_send_string_blocking(buffer); // Send the error message
+void callCallback()
+{
+  callback(receiveParameter);
 }
 
 int main(void)
 {
-pc_comm_init(9600, NULL);
+
+  // Init for pc_comm
+  pc_comm_init(9600, NULL);
   pc_comm_send_string_blocking("LOADING!\n");
 
-  wifi_init();
+  // initialize all sensor controllers
+  init_controllers();
 
   // Connect to WiFi
-  WIFI_ERROR_MESSAGE_t errorcode = wifi_command_join_AP(WIFI_SSID, WIFI_PASSWORD);
-  handle_wifi_error(errorcode, WIFI_SSID);
+  WIFI_ERROR_MESSAGE_t wifi_connection_status = wifi_command_join_AP(getWIFI_SSID(), getWIFI_PASSWORD());
+  pc_comm_send_string_blocking(testWifiConnection(wifi_connection_status));
 
   // Create TCP connection
-  errorcode = wifi_command_create_TCP_connection(TCP_IP, TCP_PORT, NULL, NULL);
-  handle_wifi_error(errorcode,TCP_IP );
+  server_connection_status = wifi_command_create_TCP_connection(getTCP_IP(), getTCP_PORT(), callCallback, receiveParameter);
+  if (server_connection_status == WIFI_OK)
+  {
+    pc_comm_send_string_blocking("\nREADY!\n\n");
+  }
+  pc_comm_send_string_blocking(testTcpConnection(server_connection_status));
 
-  display_init();
-  leds_init();
-  uvsensor_init();
-  moisture_init();
-  pump_init();
-  hc_sr04_init();
-  buttons_init();
-  dht11_init();
-
-  display_setValues(16, 10, 16, 17);
-
-  char caaray[128];
-  uint8_t humidity_integer, humidity_decimal, temperature_integer, temperature_decimal; // Variables for humidity and temperature
-
-// consider using only integer values for humidity and temperature instead of decimal values
-
-  pc_comm_send_string_blocking("READY!\n\n");
-
-  pump_run_timeout(2000);
+  timer_init_a(&button_1_check, 100);
 
   while (1)
   {
 
-    DHT11_ERROR_MESSAGE_t error = dht11_get(&humidity_integer, &humidity_decimal, &temperature_integer, &temperature_decimal);
-    if (error == DHT11_OK)
+    // initialize the humidity and temperature sensor
+    get_dht11_sensor_data();
+
+    get_formatted_water_level_reading(water_level_buffer);
+    get_formatted_moisture_reading(moisture_buffer);
+    get_formatted_uv_sensor_reading(uv_sensor_buffer);
+    get_formatted_temperature_reading(temperature_buffer);
+    get_formatted_humidity_reading(humidity_buffer);
+    get_formatted_arduino_id(arduino_id_buffer);
+
+    bool = is_data_acknowledged();
+
+    if (bool)
     {
-      sprintf(caaray, "{\n\"Tank Level\": %d,\n\"Moisture\": %d,\n\"UV\": %d,\n\"Humidity\": %d.%d,\n\"Temperature\": %d.%d\n}\n\n",
-              hc_sr04_takeMeasurement(), moisture_read(), uvsensor_read(), humidity_integer, humidity_decimal, temperature_integer, temperature_integer);
+      sprintf(buffer, "{\"DataType\": 1, \"Data\": \"{%s, %s, %s, %s, %s, %s}\"}",
+              arduino_id_buffer, humidity_buffer, temperature_buffer, uv_sensor_buffer, moisture_buffer, water_level_buffer);
+      pc_comm_send_string_blocking(buffer);
+      
+
+      wifi_command_TCP_transmit((uint8_t *)buffer, strlen(buffer));
     }
-    else if (error == DHT11_FAIL)
+
+    if (!bool)
     {
-      sprintf(caaray, "{\n\"Measurment\": %d,\n\"Moisture\": %d,\n\"UV\": %d,\n}\n\n",
-              hc_sr04_takeMeasurement(), moisture_read(), uvsensor_read());
+      pc_comm_send_string_blocking("\nNOT ACKNOWLEDGED\n");
+
+      get_formatted_arduino_id(arduino_id_buffer);
+      sprintf(buffer_id, "{\"DataType\": 0, \"Data\": \"{%s}\"}",
+              arduino_id_buffer);
+      pc_comm_send_string_blocking(buffer_id);
+      wifi_command_TCP_transmit((uint8_t *)buffer_id, strlen(buffer_id));
     }
 
-    int length = strlen(caaray);
-
-    pc_comm_send_string_blocking(caaray);
-    wifi_command_TCP_transmit((uint8_t *)caaray, length);
-
-    _delay_ms(3000);
+    //Loop to check button press every 100ms for 10s
+    for (int i=0; i < 100; i++)
+    {
+      check_pump_run();
+      _delay_ms(100);
+    }
+  pc_comm_send_string_blocking("\n");
   }
-
   return 0;
 }

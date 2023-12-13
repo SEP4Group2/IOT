@@ -24,7 +24,7 @@
  */
 
 // TODO -this is a definition for used only to pass the testing, need to be removed/testes with the real sensor
-#define MUX0 1
+#define MUX0 0
 #define MUX2 2
 #define ADC5D 5
 // TODO until here -remove 
@@ -43,11 +43,6 @@ void moisture_init(void) {
     // Enable ADC and set prescaler to 64 (16MHz/128 = 125kHz)
     // ADC must operate between 50kHz and 200kHz for its full 10-bit resolution
    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1)| (1 << ADPS0);
-    
-
-    // Disable digital input on PF5 (ADC5) (page 287)
-    // This will reduce power consumption on the pin
-    DIDR2 = (1 << ADC5D);
 }
 
 /**

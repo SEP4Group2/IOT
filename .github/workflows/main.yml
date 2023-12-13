@@ -1,6 +1,7 @@
 name: PlatformIO CI
 
-on: [push]
+on: 
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,12 +20,27 @@ jobs:
           python-version: "3.9"
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
+        
+      - name: Run Water Level Controller Test
+        run: pio test -e test_native -f "test_native_water_level_controller.c"
 
-      - name: Run wifiTest
-        run: pio test -e win_test_wifi -f "test_win_wifi"
+      - name: Run Communication Controller Test
+        run: pio test -e test_native -f "test_native_communication_controller.c"
 
-      - name: run pc_comm test
-        run: pio test -e win_test_pc_comm -f "test_win_pc_comm"
+      - name: Run Display Controller Test
+        run: pio test -e test_native -f "test_native_display_controller.c"
 
-      - name: run Light test
-        run: pio test -e win_test_light -f "test_win_light"
+      - name: Run EEPROM Controller Test
+        run: pio test -e test_native -f "test_native_eeprom.controller.c"
+
+      - name: Run Humidity Temperature Controller Test
+        run: pio test -e test_native -f "test_native_humidity_temperature_controller.c"
+
+      - name: Run Moisture Controller Test
+        run: pio test -e test_native -f "test_native_moisture_controller.c"
+
+      - name: Run Pump Controller Test
+        run: pio test -e test_native -f "test_native_pump_controller.c"
+
+      - name: Run UV Sensor Controller Test
+        run: pio test -e test_native -f "test_native_uvsensor_controller.c"
