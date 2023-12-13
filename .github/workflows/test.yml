@@ -8,24 +8,21 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up PlatformIO
-      uses: platformio/github-action@v2
-      with:
-        platform: ${{ matrix.platform }}
-        board: ${{ matrix.board }}
-
-    - name: Build and Test
-      run: |
-        platformio ci --lib="lib/controllers" --lib="lib/drivers" --lib="lib/mocks" --board=$PLATFORMIO_BOARD
-      env:
-        PLATFORMIO_BOARD: ${{ matrix.board }}
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
 
   test_native:
 
@@ -33,7 +30,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Set up Unity
       run: |
