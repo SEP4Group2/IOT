@@ -1,15 +1,19 @@
 #include "display.h"
 #include "includes.h"
+#include "display_controller.h"
 
-const void writeToDisplay(uint8_t receiveParameter)
+long previousDisplayValue = 0;
+
+const void writeToDisplay(char *receiveParameter)
 {
-    int part1, part2, part3, part4;
-    char message[50];
-    sprintf(message, "\nReceived: message from ESP8266 is: %d \n", receiveParameter);
 
-    pc_comm_send_string_blocking(receiveParameter);
-    pc_comm_send_string_blocking(message);
-    int totalNumber = receiveParameter;
+    char *endptr;
+
+    long integerValue = strtol(receiveParameter, &endptr, 10);
+
+    int part1, part2, part3, part4;
+
+    long totalNumber = integerValue;
 
     // Truncate and store each 2-digit part
     part4 = totalNumber % 100;
@@ -23,5 +27,10 @@ const void writeToDisplay(uint8_t receiveParameter)
 
     part1 = totalNumber; // The remaining part is stored in part1
 
-    display_setValues(part1, part2, part3, part4);
+    if (previousDisplayValue != integerValue)
+    {
+        display_setValues(part1, part2, part3, part4);
+    }
+
+    previousDisplayValue = integerValue;
 };

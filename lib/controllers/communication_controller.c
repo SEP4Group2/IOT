@@ -1,9 +1,15 @@
 #include "wifi.h"
-#include "display.h"
 #include "includes.h"
 #include "communication_controller.h"
-#include "pc_comm.h"
 #include "display_controller.h"
+#include "pump_controller.h"
+#include "eeprom_controller.h"
+
+#ifndef WINDOWS_TEST
+#include "pc_comm.h"
+#endif
+
+extern int run_pump;
 
 char *testWifiConnection(WIFI_ERROR_MESSAGE_t errorcode)
 {
@@ -63,42 +69,48 @@ char *testTcpConnection(WIFI_ERROR_MESSAGE_t errorcode)
     return buffer;
 }
 
-void callbackTest(char *received_message_ptr)
+int data_acknowledged = 0;
+
+int is_data_acknowledged()
 {
+    return data_acknowledged;
+}
 
-    writeToDisplay(received_message_ptr);
+void callback(char *received_message_ptr)
+{
+    char *endptr;
+    long received_message_long = strtol(received_message_ptr, &endptr, 10);
 
-    char buffer[128];
-    char buffer2[128];
-    char buffer3[128];
-    sprintf(buffer, "Communication controller &: %d\n", &received_message_ptr);
-    sprintf(buffer2, "Communication controller: %d\n", received_message_ptr);
-    sprintf(buffer3, "Communication controller*: %d\n", *received_message_ptr);
-    
-    pc_comm_send_string_blocking(buffer);
-    pc_comm_send_string_blocking(buffer2);   
-    pc_comm_send_string_blocking(buffer3);
+    long code = received_message_long / 100;
+    int id;
 
-    switch (received_message_ptr[0])
+    char buff[128];
+    sprintf(buff, "\nCallBack >> Received: Message from Server is: %s\n", received_message_ptr);
+    #ifndef WINDOWS_TEST
+    pc_comm_send_string_blocking(buff);
+    #endif
+
+    switch (code)
     {
-    case '0':
-        pc_comm_send_string_blocking("\nGOOD\n");
-        // Handle case '0', whatever is required
+    case 161616:
+        if (received_message_long == 16161601)
+        {
+           run_pump = 1;
+        }
+        if (received_message_long == 16161602)
+        {
+            data_acknowledged = 1;
+        }
         break;
 
-    case '1':
-        pc_comm_send_string_blocking("\nBAD\n");
-        // Handle case '1', whatever is required
-        break;
+    case 999999:
+        id = received_message_long % 100;
 
-    case '2':
-        pc_comm_send_string_blocking("\nDEAD\n");
-        // Handle case '2', whatever is required
+        writeFloatToEEPROM(id);
         break;
 
     default:
-        pc_comm_send_string_blocking("\nUnknown case\n");
-        // Handle default case, whatever is required
+        writeToDisplay(received_message_ptr);
         break;
     }
 }
