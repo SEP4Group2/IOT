@@ -1,4 +1,4 @@
-.piodevs
+.pio\libdeps
 !.pio\build
 .vscode
 .\lib\controllers\wifi_settings.c
