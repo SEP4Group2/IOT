@@ -23,11 +23,6 @@ jobs:
           python-version: "3.9"
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
-      - name: install unity
-        run: |
-            g++ -o test_native -DWINDOWS_TEST=1 -DNATIVE_TEST=1 -Ilib/controllers -Ilib/drivers -I$HOME/unity/extras/fixture/src test/test_native/test_native_water_level_controller.c $HOME/unity/extras/fixture/src/unity.c
-            ./test_native
-
 
   test_native:
     runs-on: ubuntu-latest
@@ -44,6 +39,5 @@ jobs:
 
       - name: Build and Test
         run: |
-          g++ -o test_native -DWINDOWS_TEST=1 -DNATIVE_TEST=1 -Ilib/controllers -Ilib/drivers test/test_native/test_native_water_level_controller.c
+          g++ -o test_native -DWINDOWS_TEST=1 -DNATIVE_TEST=1 -Ilib/controllers -Ilib/drivers -I$HOME/unity/extras/fixture/src test/test_native/test_native_water_level_controller.c $HOME/unity/extras/fixture/src/unity.c
           ./test_native
-
