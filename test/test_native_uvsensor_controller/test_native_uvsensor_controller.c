@@ -1,6 +1,6 @@
 //Fully working testing class - use as a template
 
-#include "../../fff.h"
+#include "../fff.h"
 #include <unity.h>
 #include "uvsensor.h"
 #include "uvsensor_controller.h"
