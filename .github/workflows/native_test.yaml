@@ -1,0 +1,65 @@
+name: Native tests
+
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+  test_native:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Run Water Level Controller Test
+        run: pio test -e test_native -f "test/test_native/test_native_water_level_controller.c" -v
+
+      - name: Run Communication Controller Test
+        run: pio test -e test_native -f "test/test_native/test_native_communication_controller.c" -v
+
+      - name: Run Display Controller Test
+        run: pio test -e test_native -f "test/test_native/test_native_display_controller.c" -v
+
+      - name: Run EEPROM Controller Test
+        run: pio test -e test_native -f "test/test_native/test_native_eeprom.controller.c" -v
+
+      - name: Run Humidity Temperature Controller Test
+        run: pio test -e test_native -f "test/test_native/test_native_humidity_temperature_controller" -v
+
+      - name: Run Moisture Controller Test
+        run: pio test -e test_native -f "test_native_moisture_controller" -v
+
+      - name: Run Pump Controller Test
+        run: pio test -e test_native -f "test_native_pump_controller" -v
+
+      - name: Run UV Sensor Controller Test
+        run: pio test -e test_native -f "test_native_uvsensor_controller" -v
