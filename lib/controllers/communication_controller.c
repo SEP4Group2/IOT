@@ -86,16 +86,16 @@ void callback(char *received_message_ptr)
 
     char buff[128];
     sprintf(buff, "\nCallBack >> Received: Message from Server is: %s\n", received_message_ptr);
-    #ifndef WINDOWS_TEST
+#ifndef WINDOWS_TEST
     pc_comm_send_string_blocking(buff);
-    #endif
+#endif
 
     switch (code)
     {
     case 161616:
         if (received_message_long == 16161601)
         {
-           run_pump = 1;
+            run_pump = 1;
         }
         if (received_message_long == 16161602)
         {

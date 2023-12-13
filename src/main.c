@@ -23,8 +23,8 @@
 //Declare working variables
 char receiveParameter[16];
 int run_pump = 0;
-WIFI_ERROR_MESSAGE_t server_connection_status;
 int bool;
+WIFI_ERROR_MESSAGE_t server_connection_status;
 
 //Declare arrays for sensor data
 char buffer[128];
