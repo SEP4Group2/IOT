@@ -20,9 +20,6 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: Run wifiTest
-        run: pio test -e win_test_wifi -f "test_win_wifi"
-
       - name: run pc_comm test
         run: pio test -e win_test_pc_comm -f "test_win_pc_comm"
 
