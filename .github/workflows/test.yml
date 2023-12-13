@@ -1,0 +1,47 @@
+name: Arduino CI
+
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up PlatformIO
+      uses: platformio/github-action@v2
+      with:
+        platform: ${{ matrix.platform }}
+        board: ${{ matrix.board }}
+
+    - name: Build and Test
+      run: |
+        platformio ci --lib="lib/controllers" --lib="lib/drivers" --lib="lib/mocks" --board=$PLATFORMIO_BOARD
+      env:
+        PLATFORMIO_BOARD: ${{ matrix.board }}
+
+  test_native:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Unity
+      run: |
+        mkdir -p $HOME/unity
+        curl -Ls https://github.com/ThrowTheSwitch/Unity/archive/refs/tags/v2.5.2.tar.gz | tar xz -C $HOME/unity --strip-components=1
+        export PATH="$HOME/unity/extras/fixture/src:$PATH"
+
+    - name: Build and Test
+      run: |
+        g++ -o test_native -DWINDOWS_TEST=1 -DNATIVE_TEST=1 -Ilib/controllers -Ilib/drivers test_native.cpp
+        ./test_native
