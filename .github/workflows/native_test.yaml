@@ -44,7 +44,7 @@ jobs:
         run: pio test -e test_native -f "test_native_water_level_controller" -v
 
       - name: Run Communication Controller Test
-        run: pio test -e test_native -f "test_native_comunication_controller" -v
+        run: pio test -e test_native -f "test_native_communication_controller" -v
 
       - name: Run Display Controller Test
         run: pio test -e test_native -f "test_native_display_controller" -v
