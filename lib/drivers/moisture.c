@@ -27,22 +27,20 @@
 #define MUX0 0
 #define MUX2 2
 #define ADC5D 5
-// TODO until here -remove 
+// TODO until here -remove
 
-void moisture_init(void) {
+void moisture_init(void)
+{
     // Set reference voltage to AVCC and left adjust ADC result
-    // The  MUX1:5 should be set to 10000 for choosing ADC8, which ius placed on PK0 (look at page 283)
-    //ADMUX = (1 << REFS0);//|(1<<MUX1);
-    //ADCSRB = (1<<MUX5);
+    // The  MUX1:5 should be set to 10000 for choosing ADC8, which is placed on PK0 (look at page 283)
 
-
-//ADC5 for moisture Sensor Analog
-    ADMUX = (1 << REFS0)|(1<<MUX0)|(1<<MUX2);//|(1<<MUX1);
+    // ADC5 for moisture Sensor Analog
+    ADMUX = (1 << REFS0) | (1 << MUX0) | (1 << MUX2);
     ADCSRB = 0;
 
     // Enable ADC and set prescaler to 64 (16MHz/128 = 125kHz)
     // ADC must operate between 50kHz and 200kHz for its full 10-bit resolution
-   ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1)| (1 << ADPS0);
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 }
 
 /**
@@ -52,17 +50,20 @@ void moisture_init(void) {
  *
  * @return 10-bit ADC value read from the uv sensor
  */
-uint16_t moisture_read(void) {
-
-     ADMUX = (1 << REFS0)|(1<<MUX0)|(1<<MUX2);//|(1<<MUX1);
+uint16_t moisture_read(void)
+{
+    ADMUX = (1 << REFS0) | (1 << MUX0) | (1 << MUX2);
     ADCSRB = 0;
 
-uint32_t timeout = 1000;//if 2cc for incrementing and evaluation the timeout is 1ms
+    uint32_t timeout = 1000; // if 2cc for incrementing and evaluation the timeout is 1ms
     // Start the conversion
     ADCSRA |= (1 << ADSC);
 
     // Wait for the conversion to complete
-    while ((ADCSRA & (1 << ADSC))&& timeout > 0){timeout--;};
+    while ((ADCSRA & (1 << ADSC)) && timeout > 0)
+    {
+        timeout--;
+    };
 
     // Read the 10-bit ADC value
     // ADCL must be read first, then ADCH

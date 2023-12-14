@@ -1,7 +1,5 @@
 #include "includes.h"
 #include "pc_comm.h"
-#include "display.h"
-#include "buttons.h"
 #include "periodic_task.h"
 #include "wifi.h"
 #include "avr/power.h"
@@ -107,6 +105,5 @@ int main(void)
       _delay_ms(100);
     }
   }
-
   return 0;
 }

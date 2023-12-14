@@ -48,7 +48,6 @@ DHT11_ERROR_MESSAGE_t dht11_get(uint8_t* humidity_integer, uint8_t*  humidity_de
     DATA_PORT |= (1<<DATA_BIT);
     _delay_us(40);
 
-	/* prepare to read the pin */
     DATA_DDR &= ~(1<<DATA_BIT);
     DATA_PORT |= (1<<DATA_BIT); // Do I have to pullup?
 

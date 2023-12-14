@@ -19,7 +19,6 @@
  */
 void uvsensor_init(void)
 {
-
     // Vcc
     DDRK |= (1 << PK2);
     PORTK |= (1 << PK2);
@@ -31,10 +30,6 @@ void uvsensor_init(void)
     // The  MUX1:5 should be set to 10000 for choosing ADC8, which ius placed on PK0 (look at page 283)
     ADMUX = (1 << REFS0); //|(1<<MUX1);
     ADCSRB = (1 << MUX5);
-
-    // ADC5 for Moister Sensor Analog
-    // ADMUX = (1 << REFS0)|(1<<MUX0)|(1<<MUX2);//|(1<<MUX1);
-    // ADCSRB = 0;
 
     // Enable ADC and set prescaler to 64 (16MHz/128 = 125kHz)
     // ADC must operate between 50kHz and 200kHz for its full 10-bit resolution
@@ -54,8 +49,7 @@ void uvsensor_init(void)
  */
 uint16_t uvsensor_read(void)
 {
-
-    ADMUX = (1 << REFS0); //|(1<<MUX1);
+    ADMUX = (1 << REFS0); 
     ADCSRB = (1 << MUX5);
 
     uint32_t timeout = 1000; // if 2cc for incrementing and evaluation the timeout is 1ms
